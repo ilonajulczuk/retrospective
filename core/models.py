@@ -11,10 +11,10 @@ class Project(models.Model):
     user = models.OneToOneField(User)
 
 
-class Retrospection(models.Model):
+class Retrospective(models.Model):
     user = models.ForeignKey('User')
-    summary = models.TextField()
-    direction = models.TextField()
+    summary = models.TextField(blank=True)
+    direction = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     
     def __unicode__(self):
@@ -23,21 +23,21 @@ class Retrospection(models.Model):
     
 
 class LearnedEntry(models.Model):
-    retrospection = models.ForeignKey('Retrospection')
-    category = models.CharField(max_length=50)
-    skill = models.CharField(max_length=50)
-    description = models.TextField()
-    goal = models.CharField(max_length=80)
-    previous_usage = models.CharField(max_length=80)
-    future_usages = models.CharField(max_length=80)
+    retrospection = models.ForeignKey('Retrospective', null=True)
+    category = models.CharField(max_length=50, blank=True)
+    skill = models.CharField(max_length=50, blank=True)
+    description = models.TextField(blank=True)
+    goal = models.CharField(max_length=80, blank=True)
+    previous_usage = models.CharField(max_length=80, blank=True)
+    future_usages = models.CharField(max_length=80, blank=True)
 
 
 class OutputEntry(models.Model):
-    retrospection = models.ForeignKey('Retrospection')
-    project = models.ForeignKey('Project')
-    goal = models.CharField(max_length=80)
-    problems = models.TextField()
-    notes = models.TextField()
+    retrospection = models.ForeignKey('Retrospective', null=True)
+    project = models.ForeignKey('Project', null=True)
+    goal = models.CharField(max_length=80, blank=True)
+    problems = models.TextField(blank=True)
+    notes = models.TextField(blank=True)
 
 
 class SuccessEntry(OutputEntry):

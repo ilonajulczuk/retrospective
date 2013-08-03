@@ -3,14 +3,18 @@ from django.conf.urls import patterns, include, url
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 from core.models import *
+from django.conf import settings
 
-admin.site.register(Retrospection)
+
 admin.autodiscover()
 
-urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'retrospective.views.home', name='home'),
+urlpatterns = patterns(
+    '',
     url(r'^core/', include('core.urls')),
-    # Uncomment the next line to enable the admin:
+    url(r'^static/(?P<path>.*)$',
+        'django.views.static.serve',
+        {'document_root': settings.STATIC_ROOT, 'show_indexes': True}),
+    
     url(r'^_admin/', include(admin.site.urls)),
+    url(r'', include('django.contrib.staticfiles.urls')),
 )

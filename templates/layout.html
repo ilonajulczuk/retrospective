@@ -1,0 +1,20 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{{ STATIC_URL}}bootstrap.css" />
+
+    <title>{% block title %}Retrospective{% endblock %}</title>
+</head>
+
+<body>
+    <div class="container" id="header">
+		<h1>Retrospective counts</h1>
+	</div>
+	
+    <div id="content" class="container">
+        {% block content %}{% endblock %}
+    </div>
+</br>
+</body>
+</html>
