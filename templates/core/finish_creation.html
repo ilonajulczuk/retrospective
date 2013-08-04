@@ -1,18 +1,20 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<h1>Preview of your retrospection</h1>
+<h2>Preview of your retrospection</h2>
+
+<p>{{ retrospective.as_table|safe }} </p>
 
 
-<h2>Thanks</h2>
-<p>
-	<a href="../">
-		back home
-	</a>
-</p>
-<p>
-	<a href="core/more">
-		learn more
-	</a>
-</p>
+  
+<form action="/core/create/thanks" method="post">{% csrf_token %}
+	<fieldset>  
+		<input type="hidden"></input>
+		<div class="form-actions">
+	        <button type="submit" class="btn btn-success" >Submit</button>
+	    </div>
+    </fieldset>    
+</form>
+
+
 {% endblock %}

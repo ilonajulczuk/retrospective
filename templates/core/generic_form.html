@@ -4,7 +4,7 @@
 
 {% block content %}
 <h2>{{ question }}</h2>
-
+<div class="col-lg-6">
 <form class="form-horizontal" action="{{action}}" method="post">{% csrf_token %}
     {{ form.non_field_errors }}
     <fieldset>
@@ -31,9 +31,14 @@
             {% endif %}
         {% endfor %}
         <div class="form-actions">
-        <button type="submit" class="btn btn-default" >Submit</button>
+        {% if not single %}
+            <button type="submit" name="more" class="btn btn-default" >
+                Submit and add next entry
+            </button>
+        {% endif %}
+        <button type="submit" class="btn btn-success" >Submit</button>
     </div>
     </fieldset>    
 </form>
-
+</div>
 {% endblock %}
