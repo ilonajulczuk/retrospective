@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h2>Dashboard</h2>
+
+<p>
+	Configure your things here!
+</p>
+<h3>Your projects</h3>
+{% for project in projects %}
+<li>{{ project }}</li>
+{% endfor %}
+<h3>Your past retrospections</h3>
+Short version
+
+<h3>Your emailing settings</h3>
+
+<h3>Statistics</h3>
+
+
+
+<h3>Data export</h3>
+{% endblock %}

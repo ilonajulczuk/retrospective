@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect
-from core.models import Retrospective, User
+from core.models import Retrospective, User, Project
 from core.forms import (
-  LearnedForm, FailedForm, SuccessForm, RetrospectiveGeneralForm)
+  LearnedForm, FailedForm, SuccessForm, RetrospectiveGeneralForm,
+  ProjectForm)
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 
 
 def index(request):
@@ -12,7 +15,7 @@ def index(request):
 def introduction(request):
   return render(request, 'core/introduction.html')
 
-
+@login_required()
 def create_learned(request):
     if 'retrospective_id' not in request.session:
         user = User.objects.all()[0]
@@ -37,7 +40,7 @@ def create_learned(request):
                }
     return render(request, 'core/generic_form.html', context)
 
-
+@login_required()
 def create_failed(request):
     if request.method == 'POST':
         form = FailedForm(request.POST)
@@ -57,7 +60,7 @@ def create_failed(request):
                }
     return render(request, 'core/generic_form.html', context)
 
-
+@login_required()
 def create_succeeded(request):
     if request.method == 'POST':
         form = SuccessForm(request.POST)
@@ -75,7 +78,7 @@ def create_succeeded(request):
                "action": "/core/create/succeeded"}
     return render(request, 'core/generic_form.html', context)
 
-
+@login_required()
 def general_retrospection(request):
     if request.method == 'POST':
         summary = request.POST['summary']
@@ -97,7 +100,7 @@ def general_retrospection(request):
                "action": "/core/create/general"}
     return render(request, 'core/generic_form.html', context)
 
- 
+@login_required() 
 def finish_creation(request):
     r_id = request.session['retrospective_id']
     retrospective = Retrospective.objects.get(id=r_id)
@@ -106,6 +109,45 @@ def finish_creation(request):
 
     return render(request, 'core/finish_creation.html', context)
 
+@login_required()
 def thanks(request):
     request.session.pop('retrospective_id')
     return render(request, 'core/thanks.html')
+
+@login_required()
+def profile_dashboard(request):
+    user = request.user
+    current_projects = Project.objects.filter(user=user)
+    context = {
+        "projects": current_projects,
+    }
+    return render(request, 'core/dashboard.html', context)
+
+
+@login_required()
+def logout_view(request):
+    logout(request)
+    return redirect('/core/')
+
+
+@login_required()
+def create_project(request):
+    user = request.user
+    
+    if request.method == 'POST':
+        title = request.POST['title']
+        description = request.POST['description']
+        project = Project.objects.create(
+            title=title, description=description,
+            user_id=user.id)
+        if project:
+            if 'more' not in request.POST:
+                return redirect('/core/')
+
+    form = ProjectForm()
+    context = {
+               "username": "me",
+               "question": "Describe your project",
+               "form": form,
+               "action": "/core/create/project"}
+    return render(request, 'core/generic_form.html', context)

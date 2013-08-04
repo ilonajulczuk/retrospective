@@ -91,6 +91,10 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
 )
 
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
+
+    
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -103,8 +107,10 @@ INSTALLED_APPS = (
     'django_extensions',
     'south',
     'django.contrib.admindocs',
+    'registration',
 )
 
+ACCOUNT_ACTIVATION_DAYS = 7
 
 LOGGING = {
     'version': 1,

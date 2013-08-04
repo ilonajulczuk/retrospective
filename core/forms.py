@@ -1,6 +1,7 @@
 from django import forms
 from core.models import (
-    LearnedEntry, SuccessEntry, FailedEntry, Retrospective)
+    LearnedEntry, SuccessEntry, FailedEntry,
+    Retrospective, Project)
 
 
 class LearnedForm(forms.ModelForm):
@@ -59,3 +60,14 @@ class RetrospectiveGeneralForm(forms.ModelForm):
                     attrs={'class':'form-control',
                            'rows': 1,
                            'style': "resize: none;"}))
+
+
+class ProjectForm(forms.ModelForm):
+    description = forms.CharField(
+            widget=forms.Textarea(
+                attrs={'class':'form-control',
+                       'rows': 2,
+                       'style': "resize: none;"}))
+    class Meta:
+        model = Project
+        fields = ['title', 'description',]

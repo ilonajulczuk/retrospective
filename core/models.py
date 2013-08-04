@@ -1,22 +1,19 @@
 from django.db import models
-from django.contrib.auth.models import User as DefaultUser
+from django.contrib.auth.models import User
 from core.tablefy import TablefyMixin
 
-
-class User(DefaultUser):
-    pass
 
 
 class Project(models.Model):
     description = models.TextField()
-    user = models.OneToOneField(User)
+    user = models.ForeignKey(User)
     title = models.CharField(max_length=40, blank=True, null=True)
     def __unicode__(self):
         return self.title
 
 
 class Retrospective(models.Model):
-    user = models.ForeignKey('User')
+    user = models.ForeignKey(User)
     summary = models.TextField(blank=True)
     direction = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)

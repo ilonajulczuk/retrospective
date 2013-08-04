@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h2>Registration</h2>
+<form action="/accounts/register/" method="post">{% csrf_token %}
+    {% for field in form %}
+    <div class="fieldWrapper">
+        {{ field.errors }}
+        {{ field.label_tag }}: {{ field }}
+    </div>
+	{% endfor %}
+    <p><input type="submit" class="btn btn-success" value="Submit" /></p>
+</form>
+{% endblock %}
