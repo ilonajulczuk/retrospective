@@ -1,18 +1,77 @@
 {% extends "layout.html" %}
 
 {% block content %}
+<script type="text/javascript">
+
+    function toggle_visibility(id) {
+       var e = document.getElementById(id);
+       if(e.style.display == 'block')
+          e.style.display = 'none';
+       else
+          e.style.display = 'block';
+    }
+
+</script>
+
 <h2>Dashboard</h2>
 
 <p>
 	Configure your things here!
 </p>
 <h3>Your projects</h3>
-{% for project in projects %}
-<li>{{ project }}</li>
-{% endfor %}
-<h3>Your past retrospections</h3>
-Short version
+<dl>
 
+
+
+{% for project in projects %}
+<div class="row">
+<div class="col-lg-3">
+  <dt>{{ project.title }}</dt>
+  <dd>{{ project.description }}</dd>
+</div>
+<div class="col-lg-6">
+	<form class="form-horizontal" action="/core/change/project" method="get">{% csrf_token %}
+		<input name="id" style="display:none" value="{{project.id}}"></input>
+		<button type="submit" name="id" value="{{project.id}}" class="btn btn-primary btn-xs">
+			Change
+		</button>
+	</form>
+	
+</div>
+</div>
+{% empty %}
+<p>
+You haven't create any projects yet.
+</p>
+<p>
+	<a href="/core/create/project" class="btn btn-primary">
+		Create project
+	</a>
+</p>
+{% endfor %}
+</dl>
+<h3>Your past retrospectives</h3>
+{% for retrospective in retrospectives %}
+	<div class="row">
+		<div class="col-lg-6">
+			<h3>Retrospective from {{ retrospective.created }}</h3>
+		</div>
+		<div class="col-lg-3">
+			<a class="btn btn-primary" style="margin: 10px" onclick="toggle_visibility('retrospective-{{ forloop.counter }}');">Expand</a>
+		</div>
+	</div>
+	<div id="retrospective-{{ forloop.counter }}"style="display:none;">
+		{{ retrospective.as_table|safe }}
+	</div>
+{% empty %}
+	You don't have any yet :/
+{% endfor %}
+
+<p>
+	<a href="/core/create/learned" class="btn btn-success btn-xs">
+			Create new
+	</a>
+</p>
 <h3>Your emailing settings</h3>
 
 <h3>Statistics</h3>

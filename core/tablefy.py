@@ -11,12 +11,9 @@ class TablefyMixin(object):
             return basic_header
     
     def as_table_row(self, number=None):
-        print "public fields in a mixin", getattr(self, "public_fields")
         row_cells = " ".join([
             "<td>%s</td>" % getattr(self, field)
             for field in getattr(self, "public_fields")])
-        print row_cells
-        print number
         if number is not None:
             
             return "<tr><td>%d</td>%s</tr>" % (number, row_cells)

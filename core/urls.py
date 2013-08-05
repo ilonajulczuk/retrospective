@@ -18,6 +18,8 @@ urlpatterns = patterns(
         views.finish_creation, name='done'),
     url(r'^create/project$',
         views.create_project, name='project'),
+    url(r'^change/project$',
+        views.change_project, name='change_project'),
     url(r'^create/thanks$',
         views.thanks, name='thanks'),
     url(r'^$', views.index, name='index'),

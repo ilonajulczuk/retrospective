@@ -5,6 +5,7 @@ from core.forms import (
   ProjectForm)
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+from django.http import Http404
 
 
 def index(request):
@@ -18,13 +19,12 @@ def introduction(request):
 @login_required()
 def create_learned(request):
     if 'retrospective_id' not in request.session:
-        user = User.objects.all()[0]
+        user = request.user
         retrospective = Retrospective.objects.create(user=user)
         request.session['retrospective_id'] = retrospective.id
-    
+
     if request.method == 'POST':
         form = LearnedForm(request.POST)
-        print "evaluate form!"
         if form.is_valid():
             learned = form.save()
             learned.retrospective_id = request.session['retrospective_id']
@@ -100,6 +100,7 @@ def general_retrospection(request):
                "action": "/core/create/general"}
     return render(request, 'core/generic_form.html', context)
 
+
 @login_required() 
 def finish_creation(request):
     r_id = request.session['retrospective_id']
@@ -118,8 +119,11 @@ def thanks(request):
 def profile_dashboard(request):
     user = request.user
     current_projects = Project.objects.filter(user=user)
+    retrospectives = Retrospective.objects.filter(user=user)
+    print(retrospectives)
     context = {
         "projects": current_projects,
+        "retrospectives": retrospectives,
     }
     return render(request, 'core/dashboard.html', context)
 
@@ -150,4 +154,30 @@ def create_project(request):
                "question": "Describe your project",
                "form": form,
                "action": "/core/create/project"}
+    return render(request, 'core/generic_form.html', context)
+
+
+@login_required()
+def change_project(request):
+    user = request.user
+    
+    if request.method == 'POST':
+        project_id = request.session.get('id', None)
+        if project_id is None:
+            raise Http404
+        project = Project.objects.filter(user=user).get(id=project_id)
+        form = ProjectForm(request.POST, instance=project)
+        form.save()
+        return redirect('/accounts/profile')
+
+
+    project_id = request.GET['id']
+    request.session['id'] = project_id
+    project = Project.objects.filter(user=user).get(id=project_id)
+    form = ProjectForm(instance=project)
+    context = {
+               "username": user.username,
+               "question": "Update you project",
+               "form": form,
+               "action": "/core/change/project"}
     return render(request, 'core/generic_form.html', context)
