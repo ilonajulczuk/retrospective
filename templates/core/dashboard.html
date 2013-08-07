@@ -43,13 +43,13 @@
 <p>
 You haven't create any projects yet.
 </p>
+{% endfor %}
 <p>
-	<a href="/core/create/project" class="btn btn-primary">
+	<a href="/core/create/project" class="btn btn-success">
 		Create project
 	</a>
 </p>
-{% endfor %}
-</dl>
+
 <h3>Your past retrospectives</h3>
 {% for retrospective in retrospectives %}
 	<div class="row">
@@ -73,10 +73,33 @@ You haven't create any projects yet.
 	</a>
 </p>
 <h3>Your emailing settings</h3>
-
+	{% if mailing_configuration %}
+		{% if mailing_configuration.every_week %}
+			<p>
+				Mails with reminders about retrospective will be sent to you every
+				{{ mailing_configuration.day_of_the_week }}.
+			</p>
+		{% endif %}
+		<p>
+			<a href="/core/create/mailing" class="btn btn-primary">
+				Change
+			</a>
+		</p>
+	{% else %}
+		<p>
+			You don't have mailing configuration yet.
+		</p>
+		<p>
+			<a href="/core/create/mailing" class="btn btn-success">
+				Create mailing configuration
+			</a>
+		</p>
+	{% endif %}
 <h3>Statistics</h3>
 
 
 
 <h3>Data export</h3>
+
+<h3>Account details</h3>
 {% endblock %}

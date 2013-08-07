@@ -3,28 +3,25 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="{{ STATIC_URL}}bootstrap.css" />
-
+    
     <title>{% block title %}Retrospective{% endblock %}</title>
+    <style>
+        body {background-color:#ccccfc;} 
+    </style>
 </head>
 
 <body>
     <div class="container" id="header">
-    	<div class="col-lg-2 well-small">
-	    	<img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTIOfvz-d5OmEDK0PweDUfEZ-bJuwk93Xl5EUn9a5KZ4yAKiwUk_w">
-    	</div>
-    	<div class="col-lg-10">
-    		</br>
-    		</br>
-    		</br>
-    		</br>
-    		</br>
-    		</br>
+
+    	<div class="col-lg-offset-2 col-lg-10">
 			<h1 class="page-header">Retrospectives matter</h1>
 		</div>
 	</div>
 	
-    <div id="content" class="container">
-        {% block content %}{% endblock %}
+    <div id="content" class="container panel">
+        <div class=" col-lg-offset-2 col-lg-8">
+            {% block content %}{% endblock %}
+        </div>
     </div>
     <div id="footer" class="container">
         </hr>

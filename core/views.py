@@ -6,6 +6,7 @@ from core.forms import (
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.http import Http404
+from mailing.models import MailConfiguration, BasicMailConfigurationForm
 
 
 def index(request):
@@ -118,12 +119,18 @@ def thanks(request):
 @login_required()
 def profile_dashboard(request):
     user = request.user
+    discard_broken_retrospectives(user)
     current_projects = Project.objects.filter(user=user)
     retrospectives = Retrospective.objects.filter(user=user)
-    print(retrospectives)
+    try:
+        mailing_configuration = MailConfiguration.objects.get(user=user)
+    except:
+        mailing_configuration = None
+
     context = {
         "projects": current_projects,
         "retrospectives": retrospectives,
+        "mailing_configuration": mailing_configuration,
     }
     return render(request, 'core/dashboard.html', context)
 
@@ -146,7 +153,7 @@ def create_project(request):
             user_id=user.id)
         if project:
             if 'more' not in request.POST:
-                return redirect('/core/')
+                return redirect('/accounts/profile')
 
     form = ProjectForm()
     context = {
@@ -156,6 +163,32 @@ def create_project(request):
                "action": "/core/create/project"}
     return render(request, 'core/generic_form.html', context)
 
+@login_required()
+def create_mailing_configuration(request):
+    user = request.user
+    
+    if request.method == 'POST':
+        day_of_the_week = request.POST['day_of_the_week']
+        mailing_configuration = MailConfiguration.objects.create(
+            day_of_the_week=day_of_the_week,
+            user_id=user.id
+        )
+        if mailing_configuration:
+            return redirect('/accounts/profile')
+
+    form = BasicMailConfigurationForm()
+    context = {
+               "username": user.username,
+               "question": "Configure mailing",
+               "form": form,
+               "action": "/core/create/mailing",
+               "single": True}
+    return render(request, 'core/generic_form.html', context)
+
+def discard_broken_retrospectives(user):
+    for retrospective in Retrospective.objects.filter(user=user):
+        if retrospective.is_invalid():
+            retrospective.delete()
 
 @login_required()
 def change_project(request):

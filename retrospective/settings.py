@@ -108,6 +108,7 @@ INSTALLED_APPS = (
     'south',
     'django.contrib.admindocs',
     'registration',
+    'mailing',
 )
 
 ACCOUNT_ACTIVATION_DAYS = 7

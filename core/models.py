@@ -18,6 +18,15 @@ class Retrospective(models.Model):
     direction = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     
+    def is_invalid(self):
+        if not self.learnedentry_set.exists():
+            return True
+        if not self.failedentry_set.exists():
+            return True
+        if not self.successentry_set.exists():
+            return True
+        return False
+
     def __unicode__(self):
         return "Retrospection id=%d of user %s" % (
             self.id, self.user)
