@@ -42,7 +42,7 @@ MEDIA_ROOT = ''
 # Examples: "http://example.com/media/", "http://media.example.com/"
 MEDIA_URL = ''
 
-PATH_PROJECT = "/home/attero/Projects/retrospective/"
+PATH_PROJECT = "/home/att/projects/retrospective/retrospective/"
 
 STATIC_ROOT = PATH_PROJECT
 STATIC_URL = '/static/'
