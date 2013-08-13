@@ -105,11 +105,16 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'core',
     'django_extensions',
+    'django_crontab',
     'south',
     'django.contrib.admindocs',
     'registration',
     'mailing',
 )
+
+CRONJOBS = [
+    ('0 0 * * *', 'retrospective.mailing.send_mails.send_mails')
+]
 
 ACCOUNT_ACTIVATION_DAYS = 7
 
