@@ -17,7 +17,7 @@
 <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
 <script>
 
-function generate_chart_data(monthly_data) {
+function generate_chart_data(monthly_data, color) {
 		var labels = [];
 		var data = [];
 		console.log(monthly_data);
@@ -32,9 +32,9 @@ function generate_chart_data(monthly_data) {
 			labels: labels,
 			datasets : [
 				{
-					fillColor : "rgba(51, 187, 105,0.5)",
-					strokeColor : "rgba(51, 187, 105,1)",
-					pointColor : "rgba(51, 187, 105,1)",
+					fillColor : color,
+					strokeColor : color,
+					pointColor : color,
 					data : data
 				},
 				
@@ -52,23 +52,62 @@ $.ajax({
  frequency_data = data;
 
  var ctx = document.getElementById("monthlyChart").getContext("2d");
- var frequency_month_chart_data = generate_chart_data(data.number_per_month);
+ var frequency_month_chart_data = generate_chart_data(data.number_per_month, "blue");
 	console.log(frequency_month_chart_data);
 	new Chart(ctx).Bar(frequency_month_chart_data);
 
 
  var ctx = document.getElementById("weekdayChart").getContext("2d");
- var frequency_weekday_chart_data = generate_chart_data(data.number_per_weekday);
+ var frequency_weekday_chart_data = generate_chart_data(data.number_per_weekday, "blue");
 	console.log(frequency_weekday_chart_data);
 	new Chart(ctx).Bar(frequency_weekday_chart_data);
 });
 
+$.ajax({
+  url: "/api/retrospective/content",
+  context: document.body
+}).success(function(data) {
+ console.log("success!");
+ console.log(data)
+ frequency_data = data;
+
+ var ctx = document.getElementById("learnedChart").getContext("2d");
+ var learned_chart_data = generate_chart_data(data.learned, "green");
+	new Chart(ctx).Bar(learned_chart_data);
+
+var ctx = document.getElementById("failedChart").getContext("2d");
+ var failed_chart_data = generate_chart_data(data.failed, "pink");
+	new Chart(ctx).Bar(failed_chart_data);
+
+var ctx = document.getElementById("succeededChart").getContext("2d");
+ var succeeded_chart_data = generate_chart_data(data.succeeded, "yellow");
+	new Chart(ctx).Bar(succeeded_chart_data);
+ 
+});
+
+function generate_project_block(project_name) {
+	return "<h3>" + project_name + "</h3>" + "<canvas id='" + project_name +"Chart' width='400' height='300'></canvas>"
+}
+
 window.onload = function() {
-// do something on document ready
-
-
 	
+$.ajax({
+  url: "/api/projects",
+  context: document.body
+}).success(function(project_data) {
+ console.log("success!");
+ 
 
+	for (var project_name in project_data) {
+		var project_block = generate_project_block(project_name) 
+		$( "#projects" ).append(project_block);
+		console.log(project_name, project_data[project_name])
+		 var ctx = document.getElementById(project_name + "Chart").getContext("2d");
+		 var project = generate_chart_data(project_data[project_name], "purple");
+		 new Chart(ctx).Bar(project);
+	}
+		
+});
 	
 	
 };
@@ -161,6 +200,7 @@ You haven't create any projects yet.
 		</p>
 	{% endif %}
 <h1>Statistics</h1>
+<h2>Histograms</h2>
 <div class="row">
 		<div class="col-lg-5">
 			<h3>Number of retrospectives per month</h3>
@@ -172,9 +212,25 @@ You haven't create any projects yet.
 		</div>
 	
 </div>
+</br>
+<div class="row">
+		<div class="col-lg-3">
+			<h4>'learned' by retrospective</h4>
+			<canvas id="learnedChart" width="250" height="300"></canvas>
+		</div>
+		<div class="col-offset-2 col-lg-3">
+			<h4>'failed' by retrospective</h4>
+			<canvas id="failedChart" width="250" height="300"></canvas>
+		</div>
+		<div class="col-offset-2 col-lg-2">
+			<h4>'success' by retrospective</h4>
+			<canvas id="succeededChart" width="250" height="300"></canvas>
+		</div>
+</div>
 
-
-
+<div id="projects">
+	<h2>Number of entries for each of your projects</h2>	
+</div>
 <h1>Data export</h1>
 
 <h1>Account details</h1>

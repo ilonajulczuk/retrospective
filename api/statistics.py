@@ -1,4 +1,6 @@
-from core.models import Retrospective
+from core.models import (
+	Retrospective, Project, LearnedEntry, SuccessEntry, FailedEntry
+)
 from collections import Counter
 
 
@@ -32,12 +34,44 @@ def get_data_about_retrospective_frequency(user):
 	return data
 
 def get_data_about_retrospective_content(user):
-	return {"a": 3}
+	retrospectives = Retrospective.objects.filter(user=user)
+	learned_entries = Counter()
+	failed_entries = Counter()
+	succeeded_entries = Counter()
+
+	for retrospective in retrospectives:
+		learned_entries[retrospective.learnedentry_set.count()] += 1
+		succeeded_entries[retrospective.successentry_set.count()] += 1
+		failed_entries[retrospective.failedentry_set.count()] += 1
+
+	for x in xrange(5):
+		if x not in learned_entries:
+			learned_entries[x] = 0
+
+	for x in xrange(5):
+		if x not in failed_entries:
+			failed_entries[x] = 0
+
+	for x in xrange(5):
+		if x not in succeeded_entries:
+			succeeded_entries[x] = 0
+
+	return {
+		"learned": learned_entries,
+		"failed": failed_entries,
+		"succeeded": succeeded_entries,
+	}
 
 def get_data_about_projects(user):
-	return {
-		"project0": {
-			"stuff": 1
+	projects = Project.objects.filter(user=user)
+	projects_data = {}
+	for project in projects:
+		failed = FailedEntry.objects.filter(project=project).count()
+		succeeded = SuccessEntry.objects.filter(project=project).count()
+		projects_data[project.title] = {
+			'failed': failed if failed is not None else 0,
+			'succeeded': succeeded if succeeded is not None else 0
 		}
-	}
+
+	return projects_data
 
