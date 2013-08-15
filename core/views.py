@@ -52,8 +52,7 @@ def create_failed(request):
             failed.save()
             if 'more' not in request.POST:
                 return redirect('/core/create/succeeded')
-
-    form = FailedForm()
+    form = FailedForm(initial={'retrospective_id':request.session['retrospective_id']})
     context = {"username": "me",
                "question": "In what did I fail?",
                "form": form,
@@ -72,7 +71,7 @@ def create_succeeded(request):
             if 'more' not in request.POST:
                 return redirect('/core/create/general')
 
-    form = SuccessForm()
+    form = SuccessForm(initial={'retrospective_id':request.session['retrospective_id']})
     context = {"username": "me",
                "question": "In what did I succeed?",
                "form": form,
@@ -94,7 +93,7 @@ def general_retrospection(request):
     
     form = RetrospectiveGeneralForm()
 
-    context = {"username": "me",
+    context = {
                "question": "What are my general conclusions?",
                "form": form,
                "single": True,
@@ -123,6 +122,8 @@ def learn_more(request):
 
 @login_required()
 def profile_dashboard(request):
+    if 'retrospective_id' in request.session:
+        request.session.pop('retrospective_id')
     user = request.user
     discard_broken_retrospectives(user)
     current_projects = Project.objects.filter(user=user)

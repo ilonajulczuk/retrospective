@@ -227,10 +227,21 @@ You haven't create any projects yet.
 			<canvas id="succeededChart" width="250" height="300"></canvas>
 		</div>
 </div>
+<h2>Number of entries for each of your projects</h2>
 
-<div id="projects">
-	<h2>Number of entries for each of your projects</h2>	
+<div class="row">
+	<div class="col-lg-11">
+		<h2>Number of entries for each of your projects</h2>
+	</div>
+	<div class="col-lg-1">
+		<a class="btn btn-primary" style="margin: 25px" onclick="toggle_visibility('projects');">Expand</a>
+	</div>
 </div>
+
+<div id="projects" style="display:none;">
+		
+</div>
+
 <h1>Data export</h1>
 	<p>Browse your data 
 		<a  class="btn btn-primary btn-xs" href="/api/retrospectives">

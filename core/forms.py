@@ -29,12 +29,35 @@ class SuccessForm(forms.ModelForm):
                     attrs={'class':'form-control',
                            'rows': 2,
                            'style': "resize: none;"}))
-    
+
+    def __init__(self, *args, **kwargs):
+        initial = kwargs.get('initial', None)
+        if initial:
+            retrospective_id = initial.get('retrospective_id', None)
+        else:
+            retrospective_id = None
+        super(SuccessForm, self).__init__(*args, **kwargs)
+        print retrospective_id
+        if retrospective_id:
+            userid = Retrospective.objects.get(id=retrospective_id).user_id
+            self.fields['project'].queryset = Project.objects.filter(user_id=userid)
 
 class FailedForm(forms.ModelForm):
     class Meta:
         model = FailedEntry
         fields = ['project', 'goal', 'problems', 'notes']
+
+    def __init__(self, *args, **kwargs):
+        initial = kwargs.get('initial', None)
+        if initial:
+            retrospective_id = initial.get('retrospective_id', None)
+        else:
+            retrospective_id = None
+        super(FailedForm, self).__init__(*args, **kwargs)
+        if retrospective_id:
+            userid = Retrospective.objects.get(id=retrospective_id).user_id
+            self.fields['project'].queryset = Project.objects.filter(user_id=userid)
+
     problems = forms.CharField(
                 widget=forms.Textarea(
                     attrs={'class':'form-control',
