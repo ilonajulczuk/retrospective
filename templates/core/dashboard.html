@@ -13,19 +13,83 @@
 
 </script>
 
-<h2>Dashboard</h2>
+<script src="{{ STATIC_URL }}Chart.js"></script>
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script>
+
+function generate_chart_data(monthly_data) {
+		var labels = [];
+		var data = [];
+		console.log(monthly_data);
+		for (var key in monthly_data) {
+			console.log(key);
+			var value = monthly_data[key];
+			labels.push(key);
+			data.push(value);
+	  		
+		}
+		var chart_data = {
+			labels: labels,
+			datasets : [
+				{
+					fillColor : "rgba(51, 187, 105,0.5)",
+					strokeColor : "rgba(51, 187, 105,1)",
+					pointColor : "rgba(51, 187, 105,1)",
+					data : data
+				},
+				
+			]
+		};
+		return chart_data;
+	};
+var frequency_data;
+$.ajax({
+  url: "/api/retrospective/frequency",
+  context: document.body
+}).success(function(data) {
+ console.log("success!");
+ console.log(data)
+ frequency_data = data;
+
+ var ctx = document.getElementById("monthlyChart").getContext("2d");
+ var frequency_month_chart_data = generate_chart_data(data.number_per_month);
+	console.log(frequency_month_chart_data);
+	new Chart(ctx).Bar(frequency_month_chart_data);
+
+
+ var ctx = document.getElementById("weekdayChart").getContext("2d");
+ var frequency_weekday_chart_data = generate_chart_data(data.number_per_weekday);
+	console.log(frequency_weekday_chart_data);
+	new Chart(ctx).Bar(frequency_weekday_chart_data);
+});
+
+window.onload = function() {
+// do something on document ready
+
+
+	
+
+	
+	
+};
+//Get the context of the canvas element we want to select
+
+
+</script>
+
+<h1>Dashboard</h1>
 
 <p>
 	Configure your things here!
 </p>
-<h3>Your projects</h3>
+<h1>Your projects</h1>
 <dl>
 
 
 
 {% for project in projects %}
 <div class="row">
-<div class="col-lg-3">
+<div class="col-lg-6">
   <dt>{{ project.title }}</dt>
   <dd>{{ project.description }}</dd>
 </div>
@@ -44,13 +108,14 @@
 You haven't create any projects yet.
 </p>
 {% endfor %}
+</br>
 <p>
 	<a href="/core/create/project" class="btn btn-success">
 		Create project
 	</a>
 </p>
 
-<h3>Your past retrospectives</h3>
+<h1>Your past retrospectives</h1>
 {% for retrospective in retrospectives %}
 	<div class="row">
 		<div class="col-lg-6">
@@ -72,7 +137,7 @@ You haven't create any projects yet.
 			Create new
 	</a>
 </p>
-<h3>Your emailing settings</h3>
+<h1>Your emailing settings</h1>
 	{% if mailing_configuration %}
 		{% if mailing_configuration.every_week %}
 			<p>
@@ -95,11 +160,22 @@ You haven't create any projects yet.
 			</a>
 		</p>
 	{% endif %}
-<h3>Statistics</h3>
+<h1>Statistics</h1>
+<div class="row">
+		<div class="col-lg-5">
+			<h3>Number of retrospectives per month</h3>
+			<canvas id="monthlyChart" width="400" height="300"></canvas>
+		</div>
+		<div class="col-offset-2 col-lg-5">
+			<h3>Number of retrospectives per weekday</h3>
+			<canvas id="weekdayChart" width="400" height="300"></canvas>
+		</div>
+	
+</div>
 
 
 
-<h3>Data export</h3>
+<h1>Data export</h1>
 
-<h3>Account details</h3>
+<h1>Account details</h1>
 {% endblock %}

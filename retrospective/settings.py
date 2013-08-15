@@ -50,6 +50,7 @@ STATIC_URL = '/static/'
 # Additional locations of static files
 STATICFILES_DIRS = (
    PATH_PROJECT + 'static/css',
+   PATH_PROJECT + 'static',
 )
 
 
@@ -110,6 +111,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'registration',
     'mailing',
+    'rest_framework',
 )
 
 CRONJOBS = [

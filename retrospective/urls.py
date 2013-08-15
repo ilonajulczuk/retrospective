@@ -11,6 +11,7 @@ admin.autodiscover()
 urlpatterns = patterns(
     '',
     url(r'^core/', include('core.urls')),
+    url(r'^api/', include('api.urls')),
     url(r'^static/(?P<path>.*)$',
         'django.views.static.serve',
         {'document_root': settings.STATIC_ROOT, 'show_indexes': True}),

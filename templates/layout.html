@@ -6,7 +6,20 @@
     
     <title>{% block title %}Retrospective{% endblock %}</title>
     <style>
-        body {background-color:#ccccfc;} 
+        @import url('http://fonts.googleapis.com/css?family=Lato');
+        .page-header {
+            font-family: Lato;
+            font-size: 80px;
+        }
+        body {
+            /*background: #999;  for non-css3 browsers */
+            font-size: 200%;
+            background-image:url('{{ STATIC_URL}}background.png');
+           /* background-image: linear-gradient(45deg,
+            #bcf 25%, #dde 25%, #dde 50%,
+             #bcf 50%, #bcf 75%, #dde 75%, #dde);
+            background-size:320px 320px;*/
+        } 
     </style>
 </head>
 
