@@ -116,6 +116,11 @@ def thanks(request):
     request.session.pop('retrospective_id')
     return render(request, 'core/thanks.html')
 
+
+def learn_more(request):
+    return render(request, 'core/learn_more.html')
+
+
 @login_required()
 def profile_dashboard(request):
     user = request.user
@@ -128,6 +133,8 @@ def profile_dashboard(request):
         mailing_configuration = None
 
     context = {
+        "username": user.username,
+        "email": user.email,
         "projects": current_projects,
         "retrospectives": retrospectives,
         "mailing_configuration": mailing_configuration,

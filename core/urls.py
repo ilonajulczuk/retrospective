@@ -16,6 +16,8 @@ urlpatterns = patterns(
         views.general_retrospection, name='general'),
     url(r'^create/done$',
         views.finish_creation, name='done'),
+    url(r'^more$',
+        views.learn_more, name='more'),
     url(r'^create/project$',
         views.create_project, name='project'),
     url(r'^create/mailing$',

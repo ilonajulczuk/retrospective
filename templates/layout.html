@@ -22,6 +22,16 @@
             background-size:320px 320px;*/
         } 
 
+        #footer {
+            /*background: #999;  for non-css3 browsers */
+            font-size: 200%;
+            font-family: Ubuntu;
+            background-image:url('{{ STATIC_URL}}background.png');
+           /* background-image: linear-gradient(45deg,
+            #bcf 25%, #dde 25%, #dde 50%,
+             #bcf 50%, #bcf 75%, #dde 75%, #dde);
+            background-size:320px 320px;*/
+        } 
     </style>
 </head>
 
@@ -44,13 +54,13 @@
 
             <a href="/core">
                 back home
-            </a>
+            </a> /
 
-            <a href="../more">
+            <a href="/core/more">
                 learn more
-            </a>
+            </a> /
             {% if user.is_authenticated %} 
-                <a href="/accounts/logout"> logout</a>, 
+                <a href="/accounts/logout"> logout</a> /
                 <a href="/accounts/profile">view dashboard</a>
             {% else %}
                 <a href="/accounts/login">login</a> 

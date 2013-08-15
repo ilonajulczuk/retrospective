@@ -115,7 +115,7 @@ $.ajax({
 
 
 </script>
-
+<h1>Hello {{ username }}!</h1>
 <h1>Dashboard</h1>
 
 <p>
@@ -232,6 +232,20 @@ You haven't create any projects yet.
 	<h2>Number of entries for each of your projects</h2>	
 </div>
 <h1>Data export</h1>
-
+	<p>Browse your data 
+		<a  class="btn btn-primary btn-xs" href="/api/retrospectives">
+			as api view
+		</a>
+		or 
+	 	<a  class="btn btn-primary btn-xs" href="/api/retrospectives?format=json">
+	 		as raw json
+	 	</a>
+	 	.
+	 </p>
 <h1>Account details</h1>
+<p> Your email address is: {{ email }} </p>
+<p> To change your password click: 
+	<a  class="btn btn-warning btn-xs" href="/accounts/change_password">
+			Change password
+	</a>
 {% endblock %}

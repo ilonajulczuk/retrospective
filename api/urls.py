@@ -16,6 +16,7 @@ urlpatterns = patterns('',
     url(r'^', include(router.urls)),
     url(r'^retrospective/frequency', retrospective_frequency),
     url(r'^retrospective/content', retrospective_content),
+    url(r'^retrospectives', retrospectives),
     url(r'^projects', projects_data),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 )
