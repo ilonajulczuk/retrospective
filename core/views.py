@@ -119,7 +119,6 @@ def thanks(request):
 def learn_more(request):
     return render(request, 'core/learn_more.html')
 
-
 @login_required()
 def profile_dashboard(request):
     if 'retrospective_id' in request.session:
@@ -130,7 +129,7 @@ def profile_dashboard(request):
     retrospectives = Retrospective.objects.filter(user=user)
     try:
         mailing_configuration = MailConfiguration.objects.get(user=user)
-    except:
+    except MailConfiguration.DoesNotExist:
         mailing_configuration = None
 
     context = {
@@ -174,13 +173,15 @@ def create_project(request):
 @login_required()
 def create_mailing_configuration(request):
     user = request.user
-    
+
     if request.method == 'POST':
         day_of_the_week = request.POST['day_of_the_week']
-        mailing_configuration = MailConfiguration.objects.create(
-            day_of_the_week=day_of_the_week,
+        mailing_configuration, _ = MailConfiguration.objects.get_or_create(
             user_id=user.id
         )
+        mailing_configuration.day_of_the_week = day_of_the_week
+        mailing_configuration.save()
+
         if mailing_configuration:
             return redirect('/accounts/profile')
 
@@ -201,7 +202,7 @@ def discard_broken_retrospectives(user):
 @login_required()
 def change_project(request):
     user = request.user
-    
+
     if request.method == 'POST':
         project_id = request.session.get('id', None)
         if project_id is None:
