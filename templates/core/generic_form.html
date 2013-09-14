@@ -12,7 +12,7 @@
         {% for field in form %}
             {% if field.errors %}
                 <div class="form-group error">
-                    <label class="control-label">{{ field.label }}</label> 
+                    <label class="control-label">{{ field.label }}</label>
                     <div class="form-control">{{ field }}
                         <span class="help-inline">
                             {% for error in  field.errors %}{{ error }}{% endfor %}
@@ -21,7 +21,7 @@
                 </div>
             {% else %}
                 <div class="form-group">
-                    <label class="control-label">{{ field.label }}</label> 
+                    <label class="control-label">{{ field.label }}</label>
                     <div >{{ field }}
                         {% if field.help_text %}
                             <p class="help-inline"><small>{{ field.help_text }}</small></p>
@@ -38,7 +38,7 @@
         {% endif %}
         <button type="submit" class="btn btn-success" >Submit</button>
     </div>
-    </fieldset>    
+    </fieldset>
 </form>
 </div>
 {% endblock %}

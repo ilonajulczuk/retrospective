@@ -6,14 +6,14 @@
 <p>{{ retrospective.as_table|safe }} </p>
 
 
-  
+
 <form action="/core/create/thanks" method="post">{% csrf_token %}
-	<fieldset>  
+	<fieldset>
 		<input type="hidden"></input>
 		<div class="form-actions">
 	        <button type="submit" class="btn btn-success" >Submit</button>
 	    </div>
-    </fieldset>    
+    </fieldset>
 </form>
 
 
