@@ -177,6 +177,7 @@ def create_project(request):
                "action": "/core/create/project"}
     return render(request, 'core/generic_form.html', context)
 
+
 @login_required()
 def create_mailing_configuration(request):
     user = request.user
@@ -219,7 +220,6 @@ def change_project(request):
         form.save()
         return redirect('/accounts/profile')
 
-
     project_id = request.GET['id']
     request.session['id'] = project_id
     project = Project.objects.filter(user=user).get(id=project_id)
@@ -230,3 +230,13 @@ def change_project(request):
                "form": form,
                "action": "/core/change/project"}
     return render(request, 'core/generic_form.html', context)
+
+@login_required()
+def create_workflow(request):
+    if request.method == 'POST':
+        return redidrect('/accounts/profile')
+    context = {
+        "predefined_workflows": "predefined workflows",
+        "predefined_entries": "predefined_entries",
+    }
+    return render(request, 'core/workflow_editor.html', context)
