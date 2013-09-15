@@ -17,6 +17,7 @@ def index(request):
 def introduction(request):
   return render(request, 'core/introduction.html')
 
+
 @login_required()
 def create_learned(request):
     if 'retrospective_id' not in request.session:
@@ -41,6 +42,7 @@ def create_learned(request):
                }
     return render(request, 'core/generic_form.html', context)
 
+
 @login_required()
 def create_failed(request):
     if request.method == 'POST':
@@ -52,13 +54,16 @@ def create_failed(request):
             failed.save()
             if 'more' not in request.POST:
                 return redirect('/core/create/succeeded')
-    form = FailedForm(initial={'retrospective_id':request.session['retrospective_id']})
+    else:    
+        form = FailedForm(initial={'retrospective_id':request.session['retrospective_id']})
+    
     context = {"username": "me",
                "question": "In what did I fail?",
                "form": form,
                "action": "/core/create/failed",
                }
     return render(request, 'core/generic_form.html', context)
+
 
 @login_required()
 def create_succeeded(request):
@@ -70,13 +75,14 @@ def create_succeeded(request):
             succeeded.save()
             if 'more' not in request.POST:
                 return redirect('/core/create/general')
-
-    form = SuccessForm(initial={'retrospective_id':request.session['retrospective_id']})
+    else:
+        form = SuccessForm(initial={'retrospective_id':request.session['retrospective_id']})
     context = {"username": "me",
                "question": "In what did I succeed?",
                "form": form,
                "action": "/core/create/succeeded"}
     return render(request, 'core/generic_form.html', context)
+
 
 @login_required()
 def general_retrospection(request):
@@ -89,7 +95,6 @@ def general_retrospection(request):
         retrospective.direction = direction
         retrospective.save()
         return redirect('/core/create/done')
-
     
     form = RetrospectiveGeneralForm()
 
@@ -110,14 +115,16 @@ def finish_creation(request):
 
     return render(request, 'core/finish_creation.html', context)
 
+
 @login_required()
 def thanks(request):
     request.session.pop('retrospective_id')
-    return render(request, 'core/thanks.html')
+    return render(request, 'core/dashboard.html')
 
 
 def learn_more(request):
     return render(request, 'core/learn_more.html')
+
 
 @login_required()
 def profile_dashboard(request):
