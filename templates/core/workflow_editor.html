@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<script src="http://code.jquery.com/jquery-2.0.2.min.js" type='text/javascript'></script>
+
+<script src="http://ojjs.org/download/oj/latest/oj.min.js" type='text/javascript'></script>
+
+<h2>Workflow editor</h2>
+
+    <div class="col-lg-4">
+        <div class="well">
+            <h2>Sidebox 1</h2>
+            <p>Some content</p>
+        </div>
+    </div>
+    <div class="col-lg-8" id="editor">
+        Main content
+    </div>
+
+<script>
+    $('#editor').oj(function(){
+        oj.css({
+            '.field':{color:'royalblue',
+                      width:'200px',
+                      display:'inline'
+            }}
+        );
+        oj.div({class: "well"}, function(){
+            var fieldsList = oj.List(function() {
+                oj.div(function() {
+                    oj.span('Field1');
+                    oj.Button('Remove', {class: "pull-right"});
+                })
+            })
+
+            oj.input("Field name", {class:"form-control field", placeholder:"field name"
+                                    });
+            oj.span({c:'checkbox'}, function(){
+                var skippable = oj.CheckBox(true);
+                oj.label("Enable skipping?", {for:skippable.id});
+            });
+            oj.Button("Add field", {
+                click:function(){
+                    fieldsList.add('Nice Field!')
+                }
+           });
+        });
+        oj.css({
+            h1:{
+                color: 'orange'
+            }
+        });
+    });
+</script>
+{% endblock %}
