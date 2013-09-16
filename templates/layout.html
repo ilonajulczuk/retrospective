@@ -15,13 +15,15 @@
             /*background: #999;  for non-css3 browsers */
             font-size: 120%;
             font-family: Ubuntu;
-            background-image:url('{{ STATIC_URL}}background.png');
+            background-image:url('{{ STATIC_URL }}background.png');
            /* background-image: linear-gradient(45deg,
             #bcf 25%, #dde 25%, #dde 50%,
              #bcf 50%, #bcf 75%, #dde 75%, #dde);
             background-size:320px 320px;*/
         } 
-
+        h1 {
+            color: 'orange';
+        }
         #footer {
             /*background: #999;  for non-css3 browsers */
             font-size: 140%;
@@ -44,9 +46,7 @@
 	</div>
 	
     <div id="content" class="container panel">
-        <div class=" col-lg-offset-2 col-lg-8">
             {% block content %}{% endblock %}
-        </div>
     </div>
     <div id="footer" class="container">
         </hr>

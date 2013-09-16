@@ -24,25 +24,37 @@
             '.field':{color:'royalblue',
                       width:'200px',
                       display:'inline'
-            }}
+            },
+            '.big-font':{
+                "font-size":"20px"
+            }
+        }    
         );
+
         oj.div({class: "well"}, function(){
             var fieldsList = oj.List(function() {
                 oj.div(function() {
-                    oj.span('Field1');
+                    oj.span('Field1', {c:'big-font'});
                     oj.Button('Remove', {class: "pull-right"});
                 })
             })
 
-            oj.input("Field name", {class:"form-control field", placeholder:"field name"
-                                    });
+            var name = oj.TextBox(
+                {class:"form-control field", placeholder:"field name"}
+            );
+
             oj.span({c:'checkbox'}, function(){
                 var skippable = oj.CheckBox(true);
                 oj.label("Enable skipping?", {for:skippable.id});
             });
+
             oj.Button("Add field", {
                 click:function(){
-                    fieldsList.add('Nice Field!')
+                    fieldsList.add(
+                    oj.div(function() {
+                        oj.span(name.value, {c:"big-font"}),
+                        oj.Button('Remove', {class: "pull-right"})}
+                        ));
                 }
            });
         });
