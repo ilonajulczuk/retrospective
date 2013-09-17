@@ -23,39 +23,71 @@
         oj.css({
             '.field':{color:'royalblue',
                       width:'200px',
-                      display:'inline'
+                      display:'inline',
+                      margin:'4px'
             },
             '.big-font':{
                 "font-size":"20px"
+            },
+            '.big-margins':{
+                "margin-right":"10px",
+                "margin-left":"6px"
             }
         }    
         );
-
+       
         oj.div({class: "well"}, function(){
-            var fieldsList = oj.List(function() {
-                oj.div(function() {
-                    oj.span('Field1', {c:'big-font'});
-                    oj.Button('Remove', {class: "pull-right"});
-                })
-            })
+            var fieldsList = oj.List(
+            );
 
             var name = oj.TextBox(
                 {class:"form-control field", placeholder:"field name"}
             );
-
-            oj.span({c:'checkbox'}, function(){
-                var skippable = oj.CheckBox(true);
+            
+            var skippable;
+            var skip = oj.span({c:'checkbox'}, function(){
+                skippable = oj.CheckBox(true);
                 oj.label("Enable skipping?", {for:skippable.id});
             });
+            
+            var type = oj.ListBox('short', {
+              options:['short','descriptive','project-choice'],
+                change:function(e){
+                    1 + 1;
+                },
+                c:"btn btn-default field big-margins"
+            });
 
+
+            function add_field(name, skippable, type, id) {
+                return oj.div(function() {
+                    oj.div(name, {c:"big-font col-xs-3"});
+                    oj.div(function() {
+                        oj.span("skippable: " + skippable, {c: "big-margins"});
+                        oj.span("type: " + type);
+                        oj.Button('Remove', {
+                            class: "btn btn-small big-margins",
+                            click:function(){
+                                alert(id);
+                                fieldsList.remove(id);
+                            }
+                         });
+                    }, {c:'col-md-6'});
+                }, {c: 'row-fluid container'});
+            }           
             oj.Button("Add field", {
                 click:function(){
-                    fieldsList.add(
-                    oj.div(function() {
-                        oj.span(name.value, {c:"big-font"}),
-                        oj.Button('Remove', {class: "pull-right"})}
-                        ));
-                }
+                    id = fieldsList.count;
+                    if(name.value == ""){
+                        alert("Provide name for a field!");
+                    }
+                    else {
+                        fieldsList.add(
+                            add_field(name.value, skippable.value, type.value, id)
+                        );
+                    }
+                },
+                c:"btn btn-warning field"
            });
         });
         oj.css({
