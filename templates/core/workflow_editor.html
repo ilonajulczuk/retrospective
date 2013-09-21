@@ -35,9 +35,22 @@
             }
         }    
         );
-       
+        
+        var FieldModel = Backbone.Model.extend({});
+        
+
         oj.div({class: "well"}, function(){
             var fieldsList = oj.List(
+                {
+                    model:Field,
+                    
+                        collectionModelRemoved:function() {
+                            alert("Model removed");
+                        },
+                    collectionModelAdded:function() {
+                        alert("Model added");
+                    }
+                }
             );
 
             var name = oj.TextBox(
@@ -72,8 +85,8 @@
                                 fieldsList.remove(id);
                             }
                          });
-                    }, {c:'col-md-6'});
-                }, {c: 'row-fluid container'});
+                    }, {c:'col-xs-6'});
+                }, {c: 'row'});
             }           
             oj.Button("Add field", {
                 click:function(){
@@ -83,7 +96,8 @@
                     }
                     else {
                         fieldsList.add(
-                            add_field(name.value, skippable.value, type.value, id)
+                            new FieldModel({name:name.value})
+                            //add_field(name.value, skippable.value, type.value, id)
                         );
                     }
                 },

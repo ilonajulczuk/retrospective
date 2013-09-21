@@ -1,9 +1,10 @@
+import os
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    ('Justyna Ilczuk', 'your_email@example.com'),
+    ('Justyna Ilczuk', 'justyna.ilczuk@gmail.com'),
 )
 
 MANAGERS = ADMINS
@@ -42,7 +43,8 @@ MEDIA_ROOT = ''
 # Examples: "http://example.com/media/", "http://media.example.com/"
 MEDIA_URL = ''
 
-PATH_PROJECT = "/home/att/projects/retrospective/retrospective/"
+PATH_PROJECT = PROJECT_PATH = os.path.abspath(os.path.dirname(__name__))
+#"/home/att/projects/retrospective/retrospective/"
 
 STATIC_ROOT = PATH_PROJECT
 STATIC_URL = '/static/'

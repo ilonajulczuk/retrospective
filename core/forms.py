@@ -23,7 +23,6 @@ class SuccessForm(forms.ModelForm):
         else:
             retrospective_id = None
         super(SuccessForm, self).__init__(*args, **kwargs)
-        print retrospective_id
         if retrospective_id:
             userid = Retrospective.objects.get(id=retrospective_id).user_id
             self.fields['project'].queryset = Project.objects.filter(user_id=userid)

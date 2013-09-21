@@ -23,11 +23,8 @@ def retrospective_frequency(request):
 
 @api_view(['GET'])
 def retrospective_content(request):
-    print "Here"
     user = request.user
-    print "There"
     content_data = statistics.get_data_about_retrospective_content(user)
-    print "Mostly done!"
     return Response(content_data)
 
 

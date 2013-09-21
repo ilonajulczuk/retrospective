@@ -1,11 +1,6 @@
-from fabric.api import local, settings, abort, run, cd
+from fabric.api import local, run, cd
 from fabric.api import *
-from fabric.contrib.console import confirm
 
-
-env.user = 'ubuntu'
-env.hosts = ['ec2-54-213-160-123.us-west-2.compute.amazonaws.com']
-env.key_filename = '~/keys/attero.pem'
 
 def hello():
    print("Hello world!")
@@ -17,9 +12,9 @@ def prepare_deploy():
 
 
 def deploy():
-    env.user = 'ubuntu'
-    env.hosts = ['ec2-54-213-160-123.us-west-2.compute.amazonaws.com']
+    env.user = 'att'
+    env.hosts = ['rutherford.ro']
     code_dir = '~/apps/retrospective/retrospective'
     with cd(code_dir):
         run("git pull")
-        run("touch readme.md")
+        run("touch README.md")
