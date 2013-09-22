@@ -12,13 +12,14 @@ def started():
 
 
 def upload_project_configuration():
-    source_file = pjoin(cget('deploy_files'), 'gunicorn',
+    source_file = pjoin(cget(u'deploy_files'), u'gunicorn',
                         'gunicorn_start')
-    target_file = pjoin(cget('project_dir'), 'bin',
-                        'gunicorn_start')
+    target_file = pjoin(cget(u'project_dir'), u'bin',
+                        u'gunicorn_start')
 
     print yellow('Uploading gunicorn starting script')
     upload_template(source_file, target_file, config)
+    print yellow('Upload done!')
 
     with cd(cget('project_dir')):
         run('mkdir -p run')

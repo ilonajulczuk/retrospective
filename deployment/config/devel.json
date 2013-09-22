@@ -2,5 +2,6 @@
 	"project_name": "retrospective_devel",
 	"pip_requirements": ["requirements.txt", "production.txt"],
 	"supervisor_user": "retrospective_devel",
-	"supervisor_group_name": "retrospective_devel"
+	"supervisor_group_name": "retrospective_devel",
+	"nginx_server_name": "devel-retr.atte.ro"
 }

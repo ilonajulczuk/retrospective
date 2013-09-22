@@ -4,7 +4,7 @@ from fabric.colors import yellow, green
 from fabric.api import task, env
 from fabric.decorators import hosts
 from utils import configurable_task, wrap_critical
-from modules import pip, git
+from modules import pip, git, nginx, gunicorn
 
 
 env.user = 'att'
@@ -63,7 +63,7 @@ def deploy_devel():
 
 def deploy():
 
-    components = [git, pip]
+    components = [git, pip, gunicorn, nginx]
 
     for component in components:
         print yellow('>> Starting "{}".'.format(component.COMPONENT_NAME),
