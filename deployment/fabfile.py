@@ -1,30 +1,24 @@
 from fabric.api import local, run, cd
 
-from fabric.colors import yellow, red
+from fabric.colors import yellow, green
 from fabric.api import task, env
 from fabric.decorators import hosts
-from utils import configurable_task, virtualenv
-from modules import pip
+from utils import configurable_task, wrap_critical
+from modules import pip, git
 
 
 env.user = 'att'
-env.hosts = ['rutherford.ro']
-env.directory = '~/apps/retrospective/retrospective'
-
-
-env.activate = 'source /home/att/apps/retrospective/bin/activate'
 env.key_filename = '/home/att/.ssh/id_rsa'
 
 
 @task
-@hosts(u'att@rutherford.ro')
-@configurable_task(default_config=u'config/devel.json')
-def deploy_devel():
-    deploy()
-
+def prepare_deploy():
+    test()
+    commit()
+    push()
 
 def test():
-    local("../manage.py test retrospective")
+    local("../manage.py test core")
 
 
 def commit():
@@ -35,35 +29,41 @@ def push():
     local("git push")
 
 
-def prepare_deploy():
-    test()
-    commit()
-    push()
-    
+@task
+@hosts('att@rutherford.ro')
+def init_devel_deployment():
+    init_deployment('retrospective_devel')
 
-def init_deployment():
-    code_dir = '~/apps/'
+
+@task
+@hosts('att@rutherford.ro')
+def init_stable_deployment():
+    init_deployment('retrospective_stable')
+
+
+def init_deployment(app_name):
+    with cd('~/apps'):
+        run('mkdir -p {}'.format(app_name))
+
+    code_dir = '~/apps/{}/'.format(app_name)
     with cd(code_dir):
-        run('git clone git@github.com:atteroTheGreatest/retrospective.git')
-        run('virtualenv retrospective')
+        print yellow("Cloning from remote repository", bold=True)
+        run('git clone git@github.com:atteroTheGreatest/retrospective.git code')
+        print yellow("Initialising virtualenv", bold=True)
+        run('virtualenv .')
+        print green('Success!', bold=True)
 
-def wrap_critical(f):
-    try:
-        return f()
-    except Exception as e:
-        print red('Deploy aborted due to error:')
-        print red(e.message, bold=True)
-        return False
+
+@task
+@hosts(u'att@rutherford.ro')
+@configurable_task(default_config=u'config/devel.json')
+def deploy_devel():
+    deploy()
+
 
 def deploy():
-    code_dir = '~/apps/retrospective/'
-    with cd(code_dir):
-        run("git pull")
-        with virtualenv():
-            run('pip install -r requirements.txt')
-            run("touch README.md")
 
-    components = [pip]
+    components = [git, pip]
 
     for component in components:
         print yellow('>> Starting "{}".'.format(component.COMPONENT_NAME),
@@ -73,7 +73,9 @@ def deploy():
 
 
     for component in reversed(components):
-        print yellow('>> Starting "{}".'.format(component.COMPONENT_NAME),
+        print yellow('>> Finishing "{}".'.format(component.COMPONENT_NAME),
                      bold=True)
         if not wrap_critical(component.finished):
             return
+
+    print green("Success! Deployment done.", bold=True)

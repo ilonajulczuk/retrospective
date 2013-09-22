@@ -1,5 +1,6 @@
 from fabric.operations import run
 from fabric.api import env, prefix
+from fabric.colors import red
 from functools import wraps, partial
 from contextlib import contextmanager
 import json
@@ -8,6 +9,7 @@ import os
 
 
 DEFAULT_CONFIG_FILENAME = 'config/defaults.json'
+env.activate = 'source /home/att/apps/retrospective_devel/bin/activate'
 
 config = {}
 pjoin = os.path.join
@@ -43,7 +45,7 @@ def init_custom_config(config_filename):
     with open(config_filename, 'rb') as f:
         config.update(json.load(f))
 
-    remote_home = run('echo "${HOME}"')
+    remote_home = run('echo "${HOME}"') + "/apps/"
     update_paths(remote_home)
 
 
@@ -60,6 +62,16 @@ def update_paths(remote_home):
 
 
 @contextmanager
-def virtualenv():
-    with prefix(env.activate):
+def virtualenv(path_to_env=env.activate):
+    with prefix(path_to_env):
         yield
+
+
+def wrap_critical(f):
+    try:
+        f()
+        return True
+    except Exception as e:
+        print red('Deploy aborted due to error:')
+        print red(e.message, bold=True)
+        return False
