@@ -3,112 +3,77 @@
 {% block content %}
 
 <script src="http://code.jquery.com/jquery-2.0.2.min.js" type='text/javascript'></script>
-
+<link rel="stylesheet" href="/static/todos.css"/>
 <script src="http://ojjs.org/download/oj/latest/oj.min.js" type='text/javascript'></script>
+<script src="http://underscorejs.org/underscore-min.js" type='text/javascript'></script>
+<script src="http://backbonejs.org/backbone.js" type='text/javascript'></script>
 
-<h2>Workflow editor</h2>
 
     <div class="col-lg-4">
         <div class="well">
-            <h2>Sidebox 1</h2>
-            <p>Some content</p>
+            <h2>Toolboox</h2>
         </div>
     </div>
     <div class="col-lg-8" id="editor">
-        Main content
+
+          <div id="todoapp">
+
+            <header>
+              <h1>Entries</h1>
+              <input id="new-todo" type="text" placeholder="Name?">
+              <select id="type-of-value">
+                  <option>Small input</option>
+                  <option>Big input</option>
+              </select> 
+            </header>
+
+            <section id="main">
+              <input id="toggle-all" type="checkbox">
+              <label for="toggle-all">Mark all as skippable</label>
+              <ul id="todo-list"></ul>
+            </section>
+
+            <footer>
+              <a id="clear-completed">Clear completed</a>
+              <a id="save-entry">Save entry</a>
+              <a id="previous-entry">Previous</a>
+              <a id="next-entry">Next</a>
+              <div id="todo-count"></div>
+            </footer>
+
+          </div>
+
+          <div id="instructions">
+            Double-click to edit.
+          </div>
+
+        </div>
+
+  <script src="/static/backbone.localStorage.js"></script>
+  <script src="/static/workflow.js"></script>
+
+  <!-- Templates -->
+
+  <script type="text/template" id="item-template">
+    <div class="view">
+      <input class="toggle" type="checkbox" <%= done ? 'checked="checked"' : '' %> />
+      <label><%- title %></label>
+      
+    <span class="pull-right"><%- inputType %></span>
+      <a class="destroy"></a>
     </div>
+    <input class="edit" type="text" value="<%- title %>" />
+  </script>
 
-<script>
-    $('#editor').oj(function(){
-        oj.css({
-            '.field':{color:'royalblue',
-                      width:'200px',
-                      display:'inline',
-                      margin:'4px'
-            },
-            '.big-font':{
-                "font-size":"20px"
-            },
-            '.big-margins':{
-                "margin-right":"10px",
-                "margin-left":"6px"
-            }
-        }    
-        );
-        
-        var FieldModel = Backbone.Model.extend({});
-        
+  <script type="text/template" id="stats-template">
+    <% if (done) { %>
+      <a id="clear-completed">Clear <%= done %> completed <%= done == 1 ? 'item' : 'items' %></a>
+    <% } %>
+    
+              <a id="save-entries" class="btn btn-success">Save entry</a>
+              <a id="previous-entry" class="btn btn-default">Previous</a>
+              <a id="next-entry" class="btn btn-default">Next</a>
+    <div class="todo-count"><b><%= remaining %></b> <%= remaining == 1 ? 'field' : 'fields' %> cannot be skipped</div>
+  </script>
 
-        oj.div({class: "well"}, function(){
-            var fieldsList = oj.List(
-                {
-                    model:Field,
-                    
-                        collectionModelRemoved:function() {
-                            alert("Model removed");
-                        },
-                    collectionModelAdded:function() {
-                        alert("Model added");
-                    }
-                }
-            );
-
-            var name = oj.TextBox(
-                {class:"form-control field", placeholder:"field name"}
-            );
-            
-            var skippable;
-            var skip = oj.span({c:'checkbox'}, function(){
-                skippable = oj.CheckBox(true);
-                oj.label("Enable skipping?", {for:skippable.id});
-            });
-            
-            var type = oj.ListBox('short', {
-              options:['short','descriptive','project-choice'],
-                change:function(e){
-                    1 + 1;
-                },
-                c:"btn btn-default field big-margins"
-            });
-
-
-            function add_field(name, skippable, type, id) {
-                return oj.div(function() {
-                    oj.div(name, {c:"big-font col-xs-3"});
-                    oj.div(function() {
-                        oj.span("skippable: " + skippable, {c: "big-margins"});
-                        oj.span("type: " + type);
-                        oj.Button('Remove', {
-                            class: "btn btn-small big-margins",
-                            click:function(){
-                                alert(id);
-                                fieldsList.remove(id);
-                            }
-                         });
-                    }, {c:'col-xs-6'});
-                }, {c: 'row'});
-            }           
-            oj.Button("Add field", {
-                click:function(){
-                    id = fieldsList.count;
-                    if(name.value == ""){
-                        alert("Provide name for a field!");
-                    }
-                    else {
-                        fieldsList.add(
-                            new FieldModel({name:name.value})
-                            //add_field(name.value, skippable.value, type.value, id)
-                        );
-                    }
-                },
-                c:"btn btn-warning field"
-           });
-        });
-        oj.css({
-            h1:{
-                color: 'orange'
-            }
-        });
-    });
-</script>
 {% endblock %}

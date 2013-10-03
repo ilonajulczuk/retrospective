@@ -51,8 +51,8 @@ STATIC_URL = '/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-   PATH_PROJECT + 'static/css',
-   PATH_PROJECT + 'static',
+   PATH_PROJECT + '/static/css',
+   PATH_PROJECT + '/static',
 )
 
 
