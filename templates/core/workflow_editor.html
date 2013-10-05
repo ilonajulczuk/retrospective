@@ -78,7 +78,7 @@
 
   <script type="text/template" id="item-template">
     <div class="view">
-      <input class="toggle" type="checkbox" <%= done ? 'checked="checked"' : '' %> />
+      <input class="toggle" type="checkbox" <%= skippable ? 'checked="checked"' : '' %> />
       <label><%- title %></label>
       
     <span class="pull-right"><%- inputType %></span>
@@ -88,9 +88,9 @@
   </script>
 
   <script type="text/template" id="stats-template">
-    <% if (done) { %>
+    <% if (skippable) { %>
       <a id="clear-completed">
-        Clear <%= done %> completed <%= done == 1 ? 'item' : 'items' %>
+        Clear <%= skippable %> completed <%= skippable == 1 ? 'item' : 'items' %>
       </a>
     <% } %>
     

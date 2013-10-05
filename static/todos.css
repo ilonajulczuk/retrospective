@@ -72,7 +72,7 @@ body {
 	border-bottom: none;
 }
 
-#todo-list li.done label {
+#todo-list li.skippable label {
 	color: #77cd77;
 }
 

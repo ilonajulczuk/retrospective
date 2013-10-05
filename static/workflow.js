@@ -1,30 +1,21 @@
-// An example Backbone application contributed by
-// [Jérôme Gravel-Niquet](http://jgn.me/). This demo uses a simple
-// [LocalStorage adapter](backbone-localstorage.html)
-// to persist Backbone models within your browser.
 
-// Load the application once the DOM is ready, using `jQuery.ready`:
 $(function(){
 
-  // Todo Model
-  // ----------
-
-  // Our basic **Todo** model has `title`, `order`, and `done` attributes.
   var Entry = Backbone.Model.extend({
 
-    // Default attributes for the todo item.
+    // Default attributes for the entry item.
     defaults: function() {
       return {
         title: "empty entry...",
         order: Entries.nextOrder(),
-        done: false,
+        skippable: false,
         inputType: "Small input"
       };
     },
 
-    // Toggle the `done` state of this todo item.
+    // Toggle the `skippable` state of this todo item.
     toggle: function() {
-      this.save({done: !this.get("done")});
+      this.save({skippable: !this.get("skippable")});
     }
 
   });
@@ -40,16 +31,16 @@ $(function(){
     model: Entry,
 
     // Save all of the todo items under the `"todos-backbone"` namespace.
-    localStorage: new Backbone.LocalStorage("entries-backbone"),
+    localStorage: new Backbone.LocalStorage("entries-backbone1"),
 
     // Filter down the list of all todo items that are finished.
-    done: function() {
-      return this.where({done: true});
+    skippable: function() {
+      return this.where({skippable: true});
     },
 
     // Filter down the list to only todo items that are still not finished.
     remaining: function() {
-      return this.where({done: false});
+      return this.where({skippable: false});
     },
 
     // We keep the Todos in sequential order, despite being saved by unordered
@@ -81,7 +72,7 @@ $(function(){
 
     // The DOM events specific to an item.
     events: {
-      "click .toggle"   : "toggleDone",
+      "click .toggle"   : "toggleSkippable",
       "dblclick .view"  : "edit",
       "click a.destroy" : "clear",
       "keypress .edit"  : "updateOnEnter",
@@ -96,16 +87,16 @@ $(function(){
       this.listenTo(this.model, 'destroy', this.remove);
     },
 
-    // Re-render the titles of the todo item.
+    // Re-render the titles of the entry item.
     render: function() {
       this.$el.html(this.template(this.model.toJSON()));
-      this.$el.toggleClass('done', this.model.get('done'));
+      this.$el.toggleClass('skippable', this.model.get('skippable'));
       this.input = this.$('.edit');
       return this;
     },
 
-    // Toggle the `"done"` state of the model.
-    toggleDone: function() {
+    // Toggle the `"skippable"` state of the model.
+    toggleSkippable: function() {
       this.model.toggle();
     },
 
@@ -181,13 +172,13 @@ $(function(){
     // Re-rendering the App just means refreshing the statistics -- the rest
     // of the app doesn't change.
     render: function() {
-      var done = Entries.done().length;
+      var skippable = Entries.skippable().length;
       var remaining = Entries.remaining().length;
 
       if (Entries.length) {
         this.main.show();
         this.footer.show();
-        this.footer.html(this.statsTemplate({done: done, remaining: remaining}));
+        this.footer.html(this.statsTemplate({skippable: skippable, remaining: remaining}));
       } else {
         this.main.hide();
         this.footer.hide();
@@ -217,15 +208,15 @@ $(function(){
       this.input.val('');
     },
 
-    // Clear all done todo items, destroying their models.
+    // Clear all skippable todo items, destroying their models.
     clearCompleted: function() {
-      _.invoke(Entries.done(), 'destroy');
+      _.invoke(Entries.skippable(), 'destroy');
       return false;
     },
 
     toggleAllComplete: function () {
-      var done = this.allCheckbox.checked;
-      Entries.each(function (entry) { entry.save({'done': done}); });
+      var skippable = this.allCheckbox.checked;
+      Entries.each(function (entry) { entry.save({'skippable': skippable}); });
     },
 
     saveEntries: function () {
