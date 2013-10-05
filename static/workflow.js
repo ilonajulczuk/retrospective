@@ -20,8 +20,6 @@ $(function(){
 
   });
 
-  // Todo Collection
-  // ---------------
 
   // The collection of todos is backed by *localStorage* instead of a remote
   // server.
@@ -57,6 +55,33 @@ $(function(){
 
   // Create our global collection of **Todos**.
   var Entries = new EntryList;
+
+  // Sidebox View
+  var SideboxView = Backbone.View.extend({
+    el: $("#sidebox"),
+    statsTemplate: _.template($('#sidebox-template').html()),
+    events: {
+        "click #save-workflow": "saveWorkflow",
+        "click #discard-workflow": "discardWorkflow"
+    },
+    saveWorkflow: function() {
+        alert("workflow saved!");
+    },
+    discardWorkflow: function() {
+        alert("workflow discarded!");
+    },
+
+    initialize: function() {
+      this.listenTo(Entries, 'all', this.render);
+      this.sidebox = $('#sidebox');
+    },
+
+    // Re-rendering the App just means refreshing the statistics -- the rest
+    // of the app doesn't change.
+    render: function() {
+        this.sidebox.show();
+    }
+  });
 
   // Todo Item View
   // --------------
@@ -178,6 +203,9 @@ $(function(){
       if (Entries.length) {
         this.main.show();
         this.footer.show();
+
+        var view = new SideboxView();
+        $("#sidebox").append(view.render().el);
         this.footer.html(this.statsTemplate({skippable: skippable, remaining: remaining}));
       } else {
         this.main.hide();
