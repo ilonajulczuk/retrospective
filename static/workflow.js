@@ -138,9 +138,6 @@ $(function(){
 
   });
 
-  // The Application
-  // ---------------
-
   // Our overall **AppView** is the top-level piece of UI.
   var AppView = Backbone.View.extend({
 

@@ -10,18 +10,39 @@
 
 
     <div class="col-lg-4">
-        <div class="well">
-            <h2>Toolboox</h2>
+        <div class="todoapp">
+            <h2>Workflow name</h2>
+            <input type='text' id="workflow-name"></input>
+            <h2>Workflow options</h2>
+            <div>
+                <a class="btn btn-default">Save</a>
+                <a class="btn btn-default">Discard</a>
+                <a class="btn btn-default">New</a>
+            </div>
+            <h2>Entries</h2>
+            <div>
+                <a class="btn btn-success">Save</a>
+                <a class="btn btn-default">Discard</a>
+                <a class="btn btn-default">Preview all</a>
+            </div>
+            <h2>Entry's number</h2>
+                <a class="btn btn-default">One</a>
+                <a class="btn btn-default">Multiple</a>
+                <input type='text' placeholder='3' 
+                style='display: inline; width: 50px;'>
+                </input>
+                <hr/> 
+                <a class="btn btn-success">Back to dashboard</a>
         </div>
     </div>
     <div class="col-lg-8" id="editor">
 
-          <div id="todoapp">
+          <div class="todoapp" id="todoapp">
 
             <header>
-              <h1>Entries</h1>
+              <h1>New entry</h1>
               <input id="new-todo" type="text" placeholder="Name?">
-              <select id="type-of-value">
+              <select class="value-type" id="type-of-value">
                   <option>Small input</option>
                   <option>Big input</option>
               </select> 
@@ -30,6 +51,7 @@
             <section id="main">
               <input id="toggle-all" type="checkbox">
               <label for="toggle-all">Mark all as skippable</label>
+              <h1>Entries</h1>
               <ul id="todo-list"></ul>
             </section>
 
@@ -67,7 +89,9 @@
 
   <script type="text/template" id="stats-template">
     <% if (done) { %>
-      <a id="clear-completed">Clear <%= done %> completed <%= done == 1 ? 'item' : 'items' %></a>
+      <a id="clear-completed">
+        Clear <%= done %> completed <%= done == 1 ? 'item' : 'items' %>
+      </a>
     <% } %>
     
               <a id="save-entries" class="btn btn-success">Save entry</a>
