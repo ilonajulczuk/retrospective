@@ -1,6 +1,6 @@
 from django.db import models
 from jsonfield import JSONField
-from django.contrib.auth import User
+from django.contrib.auth.models import User
 
 
 class Workflow(models.Model):
@@ -11,8 +11,7 @@ class Workflow(models.Model):
 class EntrySchema(models.Model):
     creator = models.ForeignKey(User)
     fields = JSONField()
-    workflows = models.ManyToManyField(Workflow, related_name="entryschemas",
-                                       related_query_name="entryschema")
+    workflows = models.ManyToManyField(Workflow, related_name="entryschemas")
 
 
 class Entry(models.Model):

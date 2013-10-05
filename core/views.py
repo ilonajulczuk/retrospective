@@ -1,11 +1,15 @@
+import json
 from django.shortcuts import render, redirect
 from core.models import Retrospective, User, Project
+from core.workflow import Workflow, EntrySchema
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.core.context_processors import csrf
 from core.forms import (
   LearnedForm, FailedForm, SuccessForm, RetrospectiveGeneralForm,
   ProjectForm)
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from mailing.models import MailConfiguration, BasicMailConfigurationForm
 
 
@@ -231,6 +235,7 @@ def change_project(request):
                "action": "/core/change/project"}
     return render(request, 'core/generic_form.html', context)
 
+
 @login_required()
 def create_workflow(request):
     if request.method == 'POST':
@@ -239,4 +244,22 @@ def create_workflow(request):
         "predefined_workflows": "predefined workflows",
         "predefined_entries": "predefined_entries",
     }
+    context.update(csrf(request))
     return render(request, 'core/workflow_editor.html', context)
+
+@login_required()
+def save_workflow(request):
+    if request.method == 'POST':
+        forms_info = json.loads(request.POST['forms'])
+        print forms_info
+        user = request.user
+        schema = EntrySchema.objects.create(creator=user, fields=forms_info)
+        
+        workflow = Workflow.objects.create(
+            creator=user,
+            entries_metadata="{}",
+        )
+        workflow.entryschemas.add(schema)
+        
+    return HttpResponse(status=201)
+

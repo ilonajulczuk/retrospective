@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from core.tablefy import TablefyMixin
-
+from core.workflow import *
 
 
 class Project(models.Model):

@@ -28,7 +28,9 @@ urlpatterns = patterns(
         views.change_project, name='change_project'),
     url(r'^create/thanks$',
         views.thanks, name='thanks'),
-    url(r'^workflow_editor$',
+    url(r'^workflow/editor$',
         views.create_workflow, name='create_workflow'),
+    url(r'^workflow/save$',
+        views.save_workflow, name='save_workflow'),
     url(r'^$', views.index, name='index'),
 )

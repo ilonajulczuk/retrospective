@@ -1,6 +1,38 @@
 
 $(function(){
 
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+    var csrftoken = getCookie('csrftoken');
+    console.log(csrftoken);
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+        crossDomain: false, // obviates need for sameOrigin test
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type)) {
+              xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+            console.log('before send done!');
+        }
+    });
+
   var Entry = Backbone.Model.extend({
 
     // Default attributes for the entry item.
@@ -20,41 +52,33 @@ $(function(){
 
   });
 
-
   // The collection of entries is backed by *localStorage* instead of a remote
   // server.
   var EntryList = Backbone.Collection.extend({
-
-    // Reference to this collection's model.
     model: Entry,
 
-    // Save all of the todo items under the `"todos-backbone"` namespace.
     localStorage: new Backbone.LocalStorage("entries-backbone1"),
 
-    // Filter down the list of all todo items that are finished.
     skippable: function() {
       return this.where({skippable: true});
     },
 
-    // Filter down the list to only todo items that are still not finished.
     remaining: function() {
       return this.where({skippable: false});
     },
 
-    // We keep the Todos in sequential order, despite being saved by unordered
-    // GUID in the database. This generates the next order number for new items.
     nextOrder: function() {
       if (!this.length) return 1;
       return this.last().get('order') + 1;
     },
 
-    // Todos are sorted by their original insertion order.
     comparator: 'order'
 
   });
 
-  // Create our global collection of **Todos**.
+  var forms = [];
   var Entries = new EntryList;
+  forms.push(Entries);
 
   // Sidebox View
   var SideboxView = Backbone.View.extend({
@@ -68,7 +92,36 @@ $(function(){
     },
 
     saveWorkflow: function() {
-        alert("workflow saved!");
+        console.log("oh saving");
+        $.ajax({
+            type: "POST",
+            url: '/core/workflow/save',
+            dataType: "json",
+            data: {
+                 number_of_forms: _.size(Entries),
+                 forms:  JSON.stringify(_.map(forms, function(entries) {
+                    console.log("oh how how");
+                    console.log(entries);
+                    entriesInfo = entries.map(function(entry) {
+                        console.log('in map');
+                        return {
+                            title: entry.get("title"),
+                            inputType: entry.get("inputType"),
+                            skippable: entry.get("skippable")
+                        };
+                    });
+                    console.log(entriesInfo);
+                    return {data: entriesInfo};
+                }))
+               }
+        })
+        .error(function(data) {
+            console.log("oh oh");
+            console.log(data);
+        })
+        .success(function(data) {
+            console.log(data);
+        })
     },
 
     discardWorkflow: function() {
@@ -88,10 +141,6 @@ $(function(){
     }
   });
 
-  // Todo Item View
-  // --------------
-
-  // The DOM element for a todo item...
   var EntryView = Backbone.View.extend({
 
     //... is a list tag.
