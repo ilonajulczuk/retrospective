@@ -21,7 +21,7 @@ $(function(){
   });
 
 
-  // The collection of todos is backed by *localStorage* instead of a remote
+  // The collection of entries is backed by *localStorage* instead of a remote
   // server.
   var EntryList = Backbone.Collection.extend({
 
@@ -59,14 +59,18 @@ $(function(){
   // Sidebox View
   var SideboxView = Backbone.View.extend({
     el: $("#sidebox"),
-    statsTemplate: _.template($('#sidebox-template').html()),
+
+    template: _.template($('#sidebox-template').html()),
+
     events: {
         "click #save-workflow": "saveWorkflow",
         "click #discard-workflow": "discardWorkflow"
     },
+
     saveWorkflow: function() {
         alert("workflow saved!");
     },
+
     discardWorkflow: function() {
         alert("workflow discarded!");
     },
@@ -79,7 +83,8 @@ $(function(){
     // Re-rendering the App just means refreshing the statistics -- the rest
     // of the app doesn't change.
     render: function() {
-        this.sidebox.show();
+        this.$el.html(this.template({}));
+        return this;
     }
   });
 
@@ -172,7 +177,6 @@ $(function(){
       "click #save-entries": "saveEntries",
       "click #previous-entry": "showPreviousEntry",
       "click #next-entry": "showNextEntry"
-
     },
 
     // At initialization we bind to the relevant events on the `Todos`
@@ -188,8 +192,10 @@ $(function(){
       this.listenTo(Entries, 'reset', this.addAll);
       this.listenTo(Entries, 'all', this.render);
 
+      this.sideboxView = new SideboxView();
       this.footer = this.$('footer');
       this.main = $('#main');
+      this.sidebox = $('#sidebox');
 
       Entries.fetch();
     },
@@ -203,9 +209,7 @@ $(function(){
       if (Entries.length) {
         this.main.show();
         this.footer.show();
-
-        var view = new SideboxView();
-        $("#sidebox").append(view.render().el);
+        this.sidebox.html(this.sideboxView.render().el);
         this.footer.html(this.statsTemplate({skippable: skippable, remaining: remaining}));
       } else {
         this.main.hide();
