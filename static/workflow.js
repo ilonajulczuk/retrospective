@@ -84,10 +84,45 @@ $(function(){
                 el: $("#sidebox"),
 
             template: _.template($('#sidebox-template').html()),
-
+            multiple: false,
+            numberOfFields: 1,
             events: {
                     "click #save-workflow": "saveWorkflow",
-            "click #discard-workflow": "discardWorkflow"
+                    "click #discard-workflow": "discardWorkflow",
+                    "click #new-workflow": "startNewWorkflow",
+                    "click #fields-single": "setFieldsSingle",
+                    "click #fields-multiple": "setFieldsMultiple",
+                    "change #fields-count": "changeNumberOfFields"
+            },
+
+            startNewWorkflow: function() {
+                    alert("We'll start shortly");
+            },
+
+            setFieldsSingle: function() {
+                    this.multiple = false;
+                    this.render();
+                    this.changeNumberOfFields();
+            },
+
+            setFieldsMultiple: function() {
+                    this.multiple = true;
+                    this.render();
+                    this.changeNumberOfFields();
+            },
+
+            changeNumberOfFields: function(newNumber) {
+                if(newNumber == null) {
+                        newNumber = $("#fields-count").val();
+                        if(newNumber == undefined) {
+                                newNumber = 1;
+                        }
+                        this.numberOfFields = newNumber;
+                }
+                else {
+                        this.numberOfFields = newNumber.target.value;
+                }
+                console.log(this.numberOfFields);
             },
 
             saveWorkflow: function() {
@@ -97,26 +132,47 @@ $(function(){
                             dataType: "json",
                             data: {
                                     number_of_forms: _.size(Entries),
-                            forms:  JSON.stringify(_.map(forms, function(entries) {
-                                    entriesInfo = entries.map(function(entry) {
+                                    forms:  JSON.stringify(_.map(forms, function(entries) {
+                                            entriesInfo = entries.map(function(entry) {
                                             return {
                                                     title: entry.get("title"),
                                                 inputType: entry.get("inputType"),
                                                 skippable: entry.get("skippable")
                                             };
-                                    });
-                                    return {data: entriesInfo};
-                            }))
+                                            });
+                                            return {data: entriesInfo};
+
+                                    })),
+                                    title: $("#workflow-name").val()
                             }
                     })
                     .error(function(data) {
+                            console.log(data);
+                            alert("Oh, there was some problem, and workflow couldn't be saved");
                     })
                     .success(function(data) {
+                            console.log(data);
+                            alert("Yeah, your workflow was successfully saved");
                     })
             },
 
             discardWorkflow: function() {
-                    alert("workflow discarded!");
+                    $.ajax({
+                            type: "POST",
+                            url: '/core/workflow/delete',
+                            dataType: "json",
+                            data: {
+                                    title: $("#workflow-name").val()
+                            }
+                    })
+                    .error(function(data) {
+                            console.log(data);
+                            alert("Oh noes, it's still alive!");
+                    })
+                    .success(function(data) {
+                            console.log(data);
+                            alert("Yeah, your workflow was successfully deleted");
+                    })
             },
 
             initialize: function() {
@@ -127,7 +183,7 @@ $(function(){
             // Re-rendering the App just means refreshing the statistics -- the rest
             // of the app doesn't change.
             render: function() {
-                    this.$el.html(this.template({}));
+                    this.$el.html(this.template({multiple: this.multiple}));
                     return this;
             }
         });

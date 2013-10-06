@@ -96,20 +96,53 @@ def create_workflow(request):
     context.update(csrf(request))
     return render(request, 'core/workflow_editor.html', context)
 
+
 @login_required()
 def save_workflow(request):
     if request.method == 'POST':
         forms_info = json.loads(request.POST['forms'])
+        title = request.POST['title']
+
         user = request.user
-        schema = EntrySchema.objects.create(creator=user, fields=forms_info)
-        
-        workflow = Workflow.objects.create(
+        schema, _ = EntrySchema.objects.get_or_create(
             creator=user,
-            entries_metadata="{}",
+            title=title
+        )
+
+        schema.fields = forms_info
+        schema.save()
+
+        workflow, created = Workflow.objects.get_or_create(
+            creator=user,
+            title=title,
         )
         workflow.entryschemas.add(schema)
-        
-    return HttpResponse(status=201)
+
+        workflow.entries_metadata = "{}"
+        workflow.save()
+        if created:
+            return HttpResponse(status=201)
+        else:
+            return HttpResponse(status=204)
+    else:
+        return HttpResponse(status=404)
+
+
+@login_required()
+def delete_workflow(request):
+    if request.method == 'POST':
+        title = request.POST['title']
+        user = request.user
+
+        workflows = Workflow.objects.filter(
+            creator=user,
+            title=title,
+        )
+        workflows.delete()
+
+        return HttpResponse()
+    else:
+        return HttpResponse(status=404)
 
 @login_required()
 def create_learned(request):

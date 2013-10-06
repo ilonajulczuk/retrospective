@@ -32,5 +32,7 @@ urlpatterns = patterns(
         views.create_workflow, name='create_workflow'),
     url(r'^workflow/save$',
         views.save_workflow, name='save_workflow'),
+    url(r'^workflow/delete$',
+        views.delete_workflow, name='delete_workflow'),
     url(r'^$', views.index, name='index'),
 )

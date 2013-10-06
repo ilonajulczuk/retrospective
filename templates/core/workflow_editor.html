@@ -24,7 +24,7 @@
               <select class="value-type" id="type-of-value">
                   <option>Small input</option>
                   <option>Big input</option>
-              </select> 
+              </select>
             </header>
 
             <section id="main">
@@ -59,7 +59,7 @@
     <div class="view">
       <input class="toggle" type="checkbox" <%= skippable ? 'checked="checked"' : '' %> />
       <label><%- title %></label>
-      
+
     <span class="pull-right"><%- inputType %></span>
       <a class="destroy"></a>
     </div>
@@ -86,22 +86,23 @@
             <div>
                 <a class="btn btn-default" id="save-workflow">Save</a>
                 <a class="btn btn-default" id="discard-workflow">Discard</a>
-                <a class="btn btn-default">New</a>
+                <a class="btn btn-default" id="new-workflow">New</a>
             </div>
             <h2>Entries</h2>
             <div>
-                <a class="btn btn-success">Save</a>
-                <a class="btn btn-default">Discard</a>
-                <a class="btn btn-default">Preview all</a>
+                <a class="btn btn-default" id="preview-all">Preview all</a>
             </div>
             <h2>Entry's number</h2>
-                <a class="btn btn-default">One</a>
-                <a class="btn btn-default">Multiple</a>
-                <input type='text' placeholder='3' 
-                style='display: inline; width: 50px;'>
-                </input>
-                <hr/> 
-                <a class="btn btn-success">Back to dashboard</a>
+                <a class="btn btn-default" id="fields-single">One</a>
+                <a class="btn btn-default" id="fields-multiple">Multiple</a>
+                <% if (multiple) { %>
+                      <select class="value-type" id="fields-count" style="display: inline;">
+                          <option>2</option>
+                          <option>3</option>
+                      </select>
+                <% } %>
+                <hr/>
+                <a class="btn btn-success" href="/core/workflow/try">Try it now</a>
         </div>
   </script>
 {% endblock %}
