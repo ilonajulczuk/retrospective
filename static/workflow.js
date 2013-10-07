@@ -147,12 +147,8 @@ $(function(){
                             }
                     })
                     .error(function(data) {
-                            console.log(data);
-                            alert("Oh, there was some problem, and workflow couldn't be saved");
                     })
                     .success(function(data) {
-                            console.log(data);
-                            alert("Yeah, your workflow was successfully saved");
                     })
             },
 
@@ -166,12 +162,8 @@ $(function(){
                             }
                     })
                     .error(function(data) {
-                            console.log(data);
-                            alert("Oh noes, it's still alive!");
                     })
                     .success(function(data) {
-                            console.log(data);
-                            alert("Yeah, your workflow was successfully deleted");
                     })
             },
 
@@ -261,7 +253,7 @@ $(function(){
             // Instead of generating a new element, bind to the existing skeleton of
             // the App already present in the HTML.
             el: $("#todoapp"),
-
+            currentEntryNumber: 0,
             // Our template for the line of statistics at the bottom of the app.
             statsTemplate: _.template($('#stats-template').html()),
 
@@ -275,11 +267,50 @@ $(function(){
                     "click #next-entry": "showNextEntry"
             },
 
+            showPreviousEntry: function() {
+                   console.log("oh previous entry");
+                   if(this.currentEntryNumber > 0) {
+                           Entries.stopListening();
+                           Sidebox.stopListening(Entries);
+                           Entries = forms[this.currentEntryNumber - 1];
+                           Sidebox.listenTo(Entries, 'all', Sidebox.render);
+                           this.currentEntryNumber -= 1;
+                   }
+
+                   this.clearViewOfAll();
+                   this.addAll();
+                   this.render();
+                   this.listenTo(Entries, 'add', this.addOne);
+                   this.listenTo(Entries, 'reset', this.addAll);
+                   this.listenTo(Entries, 'all', this.render);
+            },
+
+            showNextEntry: function() {
+                   console.log("next entry is comming");
+                    if(this.currentEntryNumber + 1 == _.size(forms)) {
+                           Entries.stopListening();
+                           Sidebox.stopListening(Entries);
+                           Entries = new EntryList();
+                           Sidebox.listenTo(Entries, 'all', Sidebox.render);
+                           forms.push(Entries);
+                           console.log(Entries);
+                   }
+                   else {
+                           Entries = forms[this.currentEntryNumber + 1]
+                   }
+                   this.currentEntryNumber += 1;
+                   this.clearViewOfAll();
+                   this.addAll();
+                   this.render();
+                   this.listenTo(Entries, 'add', this.addOne);
+                   this.listenTo(Entries, 'reset', this.addAll);
+                   this.listenTo(Entries, 'all', this.render);
+            },
+
             // At initialization we bind to the relevant events on the `Entries`
             // collection, when items are added or changed. Kick things off by
             // loading any preexisting todos that might be saved in *localStorage*.
             initialize: function() {
-
                     this.input = this.$("#new-todo");
                     this.valueType = this.$("#type-of-value");
                     this.allCheckbox = this.$("#toggle-all")[0];
@@ -288,10 +319,8 @@ $(function(){
                     this.listenTo(Entries, 'reset', this.addAll);
                     this.listenTo(Entries, 'all', this.render);
 
-                    this.sideboxView = new SideboxView();
                     this.footer = this.$('footer');
                     this.main = $('#main');
-                    this.sidebox = $('#sidebox');
 
                     Entries.fetch();
             },
@@ -301,11 +330,10 @@ $(function(){
             render: function() {
                     var skippable = Entries.skippable().length;
                     var remaining = Entries.remaining().length;
-
                     if (Entries.length) {
                             this.main.show();
                             this.footer.show();
-                            this.sidebox.html(this.sideboxView.render().el);
+
                             this.footer.html(
                                     this.statsTemplate(
                                             {
@@ -317,7 +345,6 @@ $(function(){
 
                     } else {
                             this.main.hide();
-                            this.footer.hide();
                     }
 
                     this.allCheckbox.checked = !remaining;
@@ -338,9 +365,14 @@ $(function(){
             // If you hit return in the main input field, create new **Todo** model,
             // persisting it to *localStorage*.
             createOnEnter: function(e) {
+                    console.log("create on enter");
                     if (e.keyCode != 13) return;
                     if (!this.input.val()) return;
-                    Entries.create({title: this.input.val(), inputType: this.valueType.val()});
+                    Entries.create({
+                          title: this.input.val(),
+                          inputType: this.valueType.val()
+                    });
+                    console.log("Oh, new entry should be created");
                     this.input.val('');
             },
 
@@ -348,6 +380,10 @@ $(function(){
             clearCompleted: function() {
                     _.invoke(Entries.skippable(), 'destroy');
                     return false;
+            },
+
+            clearViewOfAll: function() {
+                    this.$("#todo-list").html("");
             },
 
             toggleAllComplete: function () {
@@ -361,6 +397,8 @@ $(function(){
             }
         });
 
+        Sidebox = new SideboxView();
+        $("#sidebox").html(Sidebox.render().el);
         // Finally, we kick things off by creating the **App**.
         var App = new AppView;
 

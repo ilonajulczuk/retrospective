@@ -121,9 +121,9 @@ def save_workflow(request):
         workflow.entries_metadata = "{}"
         workflow.save()
         if created:
-            return HttpResponse(status=201)
+            return HttpResponse("{status: 201}")
         else:
-            return HttpResponse(status=204)
+            return HttpResponse("{status: 204}")
     else:
         return HttpResponse(status=404)
 
@@ -140,9 +140,9 @@ def delete_workflow(request):
         )
         workflows.delete()
 
-        return HttpResponse()
+        return HttpResponse("{status: 200}")
     else:
-        return HttpResponse(status=404)
+        return HttpResponse("{status: 404}")
 
 @login_required()
 def create_learned(request):
