@@ -34,30 +34,29 @@ $(function(){
 
         var Entry = Backbone.Model.extend({
 
-                // Default attributes for the entry item.
-                defaults: function() {
-                        return {
-                                title: "empty entry...",
-                                order: Entries.nextOrder(),
-                                skippable: false,
-                                inputType: "Small input"
-                        };
-                },
+            // Default attributes for the entry item.
+            defaults: function() {
+                return {
+                    title: "empty entry...",
+                    order: Entries.nextOrder(),
+                    skippable: false,
+                    inputType: "Small input"
+                };
+            },
 
-            // Toggle the `skippable` state of this todo item.
-                toggle: function() {
-                        this.save({skippable: !this.get("skippable")});
-                 }
+        // Toggle the `skippable` state of this todo item.
+            toggle: function() {
+                this.save({skippable: !this.get("skippable")});
+            }
 
         });
 
         // The collection of entries is backed by *localStorage* instead of a remote
         // server.
         var EntryList = Backbone.Collection.extend({
-                model: Entry,
+            model: Entry,
 
-            localStorage: new Backbone.LocalStorage("entries-backbone1"),
-
+            url: '/workflow/editor/entry',
             skippable: function() {
                     return this.where({skippable: true});
             },
@@ -85,6 +84,7 @@ $(function(){
 
             template: _.template($('#sidebox-template').html()),
             multiple: false,
+            title: "unknown_workflow",
             numberOfFields: 1,
             events: {
                     "click #save-workflow": "saveWorkflow",
@@ -92,32 +92,37 @@ $(function(){
                     "click #new-workflow": "startNewWorkflow",
                     "click #fields-single": "setFieldsSingle",
                     "click #fields-multiple": "setFieldsMultiple",
-                    "change #fields-count": "changeNumberOfFields"
+                    "change #fields-count": "changeNumberOfFields",
+                    "change #workflow-name": "changeName"
             },
 
             startNewWorkflow: function() {
-                    alert("We'll start shortly");
+                alert("We'll start shortly");
             },
 
             setFieldsSingle: function() {
-                    this.multiple = false;
-                    this.render();
-                    this.changeNumberOfFields();
+                this.multiple = false;
+                this.render();
+                this.changeNumberOfFields();
+            },
+            
+            changeName: function() {
+                this.name = $("#workflow-name").val();
             },
 
             setFieldsMultiple: function() {
-                    this.multiple = true;
-                    this.render();
-                    this.changeNumberOfFields();
+                this.multiple = true;
+                this.render();
+                this.changeNumberOfFields();
             },
 
             changeNumberOfFields: function(newNumber) {
                 if(newNumber == null) {
-                        newNumber = $("#fields-count").val();
-                        if(newNumber == undefined) {
-                                newNumber = 1;
-                        }
-                        this.numberOfFields = newNumber;
+                    newNumber = $("#fields-count").val();
+                    if(newNumber == undefined) {
+                            newNumber = 1;
+                    }
+                    this.numberOfFields = newNumber;
                 }
                 else {
                         this.numberOfFields = newNumber.target.value;
@@ -126,64 +131,64 @@ $(function(){
             },
 
             saveWorkflow: function() {
-                    $.ajax({
-                            type: "POST",
-                            url: '/core/workflow/save',
-                            dataType: "json",
-                            data: {
-                                    number_of_forms: _.size(Entries),
-                                    forms:  JSON.stringify(_.map(forms, function(entries) {
-                                            entriesInfo = entries.map(function(entry) {
-                                            return {
-                                                    title: entry.get("title"),
-                                                inputType: entry.get("inputType"),
-                                                skippable: entry.get("skippable")
-                                            };
-                                            });
-                                            return {data: entriesInfo};
+                $.ajax({
+                    type: "POST",
+                    url: '/core/workflow/save',
+                    dataType: "json",
+                    data: {
+                        number_of_forms: _.size(Entries),
+                        forms:  JSON.stringify(_.map(forms, function(entries) {
+                            entriesInfo = entries.map(function(entry) {
+                            return {
+                                title: entry.get("title"),
+                                inputType: entry.get("inputType"),
+                                skippable: entry.get("skippable")
+                            };
+                            });
+                            return {data: entriesInfo};
 
-                                    })),
-                                    title: $("#workflow-name").val()
-                            }
-                    })
-                    .error(function(data) {
-                    })
-                    .success(function(data) {
-                    })
+                        })),
+                        title: $("#workflow-name").val()
+                    }
+                })
+                .error(function(data) {
+                })
+                .success(function(data) {
+                })
             },
 
             discardWorkflow: function() {
-                    $.ajax({
-                            type: "POST",
-                            url: '/core/workflow/delete',
-                            dataType: "json",
-                            data: {
-                                    title: $("#workflow-name").val()
-                            }
-                    })
-                    .error(function(data) {
-                    })
-                    .success(function(data) {
-                    })
+                $.ajax({
+                        type: "POST",
+                        url: '/core/workflow/delete',
+                        dataType: "json",
+                        data: {
+                                title: $("#workflow-name").val()
+                        }
+                })
+                .error(function(data) {
+                })
+                .success(function(data) {
+                });
+                App.clearAllEntries();
             },
-
             initialize: function() {
-                    this.listenTo(Entries, 'all', this.render);
-                    this.sidebox = $('#sidebox');
+                this.listenTo(Entries, 'all', this.render);
+                this.sidebox = $('#sidebox');
             },
 
             // Re-rendering the App just means refreshing the statistics -- the rest
             // of the app doesn't change.
             render: function() {
-                    this.$el.html(this.template({multiple: this.multiple}));
-                    return this;
+                this.$el.html(this.template({multiple: this.multiple, title: this.title}));
+                return this;
             }
         });
 
         var EntryView = Backbone.View.extend({
 
-                //... is a list tag.
-                tagName:  "li",
+            //... is a list tag.
+            tagName:  "li",
 
             // Cache the template function for a single item.
             template: _.template($('#item-template').html()),
@@ -201,27 +206,27 @@ $(function(){
             // a one-to-one correspondence between a **Todo** and a **TodoView** in this
             // app, we set a direct reference on the model for convenience.
             initialize: function() {
-                    this.listenTo(this.model, 'change', this.render);
-                    this.listenTo(this.model, 'destroy', this.remove);
+                this.listenTo(this.model, 'change', this.render);
+                this.listenTo(this.model, 'destroy', this.remove);
             },
 
             // Re-render the titles of the entry item.
             render: function() {
-                    this.$el.html(this.template(this.model.toJSON()));
-                    this.$el.toggleClass('skippable', this.model.get('skippable'));
-                    this.input = this.$('.edit');
-                    return this;
+                this.$el.html(this.template(this.model.toJSON()));
+                this.$el.toggleClass('skippable', this.model.get('skippable'));
+                this.input = this.$('.edit');
+                return this;
             },
 
             // Toggle the `"skippable"` state of the model.
             toggleSkippable: function() {
-                    this.model.toggle();
+                this.model.toggle();
             },
 
             // Switch this view into `"editing"` mode, displaying the input field.
             edit: function() {
-                    this.$el.addClass("editing");
-                    this.input.focus();
+                this.$el.addClass("editing");
+                this.input.focus();
             },
 
             // Close the `"editing"` mode, saving changes to the todo.
@@ -266,88 +271,90 @@ $(function(){
                     "click #previous-entry": "showPreviousEntry",
                     "click #next-entry": "showNextEntry"
             },
-
+            clearAllEntries: function() {
+                Entries.stopListening();
+                Sidebox.stopListening(Entries);
+                Entries = new EntryList;
+                forms = [Entries];
+                Sidebox.listenTo(Entries, 'all', Sidebox.render)
+                this.currentEntryNumber = 0;
+                this.refreshEntriesBindings();
+            },
             showPreviousEntry: function() {
-                   console.log("oh previous entry");
-                   if(this.currentEntryNumber > 0) {
-                           Entries.stopListening();
-                           Sidebox.stopListening(Entries);
-                           Entries = forms[this.currentEntryNumber - 1];
-                           Sidebox.listenTo(Entries, 'all', Sidebox.render);
-                           this.currentEntryNumber -= 1;
-                   }
-
-                   this.clearViewOfAll();
-                   this.addAll();
-                   this.render();
-                   this.listenTo(Entries, 'add', this.addOne);
-                   this.listenTo(Entries, 'reset', this.addAll);
-                   this.listenTo(Entries, 'all', this.render);
+               if(this.currentEntryNumber > 0) {
+                   Entries.stopListening();
+                   Sidebox.stopListening(Entries);
+                   Entries = forms[this.currentEntryNumber - 1];
+                   Sidebox.listenTo(Entries, 'all', Sidebox.render);
+                   this.currentEntryNumber -= 1;
+               }
+               this.refreshEntriesBindings();
             },
 
             showNextEntry: function() {
-                   console.log("next entry is comming");
-                    if(this.currentEntryNumber + 1 == _.size(forms)) {
-                           Entries.stopListening();
-                           Sidebox.stopListening(Entries);
-                           Entries = new EntryList();
-                           Sidebox.listenTo(Entries, 'all', Sidebox.render);
-                           forms.push(Entries);
-                           console.log(Entries);
-                   }
-                   else {
-                           Entries = forms[this.currentEntryNumber + 1]
-                   }
-                   this.currentEntryNumber += 1;
-                   this.clearViewOfAll();
-                   this.addAll();
-                   this.render();
-                   this.listenTo(Entries, 'add', this.addOne);
-                   this.listenTo(Entries, 'reset', this.addAll);
-                   this.listenTo(Entries, 'all', this.render);
+               if(this.currentEntryNumber + 1 == _.size(forms)) {
+                   Entries.stopListening();
+                   Sidebox.stopListening(Entries);
+                   Entries = new EntryList();
+                   Sidebox.listenTo(Entries, 'all', Sidebox.render);
+                   forms.push(Entries);
+                   console.log(Entries);
+               }
+               else {
+                   Entries = forms[this.currentEntryNumber + 1]
+               }
+               this.currentEntryNumber += 1;
+               this.refreshEntriesBindings();
             },
-
+            refreshEntriesBindings: function() {
+               this.clearViewOfAll();
+               this.addAll();
+               this.render();
+               this.listenTo(Entries, 'add', this.addOne);
+               this.listenTo(Entries, 'reset', this.addAll);
+               this.listenTo(Entries, 'all', this.render);
+            },
             // At initialization we bind to the relevant events on the `Entries`
             // collection, when items are added or changed. Kick things off by
             // loading any preexisting todos that might be saved in *localStorage*.
             initialize: function() {
-                    this.input = this.$("#new-todo");
-                    this.valueType = this.$("#type-of-value");
-                    this.allCheckbox = this.$("#toggle-all")[0];
+                this.input = this.$("#new-todo");
+                this.valueType = this.$("#type-of-value");
+                this.allCheckbox = this.$("#toggle-all")[0];
 
-                    this.listenTo(Entries, 'add', this.addOne);
-                    this.listenTo(Entries, 'reset', this.addAll);
-                    this.listenTo(Entries, 'all', this.render);
+                this.listenTo(Entries, 'add', this.addOne);
+                this.listenTo(Entries, 'reset', this.addAll);
+                this.listenTo(Entries, 'all', this.render);
 
-                    this.footer = this.$('footer');
-                    this.main = $('#main');
+                this.footer = this.$('footer');
+                this.main = $('#main');
 
-                    Entries.fetch();
+                Entries.fetch();
             },
 
             // Re-rendering the App just means refreshing the statistics -- the rest
             // of the app doesn't change.
             render: function() {
-                    var skippable = Entries.skippable().length;
-                    var remaining = Entries.remaining().length;
-                    if (Entries.length) {
-                            this.main.show();
-                            this.footer.show();
+                var skippable = Entries.skippable().length;
+                var remaining = Entries.remaining().length;
+                if (Entries.length) {
+                    this.main.show();
+                    this.footer.show();
 
-                            this.footer.html(
-                                    this.statsTemplate(
-                                            {
-                                                    skippable: skippable,
-                                                    remaining: remaining
-                                            }
-                                     )
-                            );
+                    this.footer.html(
+                        this.statsTemplate(
+                            {
+                                skippable: skippable,
+                                remaining: remaining
+                            }
+                         )
+                    );
 
-                    } else {
-                            this.main.hide();
-                    }
+                } else {
+                    this.main.hide();
+                }
 
-                    this.allCheckbox.checked = !remaining;
+                this.allCheckbox.checked = !remaining;
             },
 
             // Add a single todo item to the list by creating a view for it, and

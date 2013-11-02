@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from core.tablefy import TablefyMixin
 from core.workflow import *
 
+# TODO wipe out this tablefying thing
 
 class Project(models.Model):
     description = models.TextField()
@@ -17,7 +18,7 @@ class Retrospective(models.Model):
     summary = models.TextField(blank=True)
     direction = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
-    
+
     def is_invalid(self):
         if not self.learnedentry_set.exists():
             return True
@@ -95,7 +96,7 @@ class SuccessEntry(OutputEntry, TablefyMixin):
 
 class FailedEntry(OutputEntry, TablefyMixin):
     retrospective = models.ForeignKey('Retrospective', null=True)
-    
+
     def __unicode__(self):
         return "%s id=%d, goal=%s, problems=%s" % (
             "FailedEntry", self.id, self.goal, self.problems)
