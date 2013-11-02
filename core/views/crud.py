@@ -152,6 +152,47 @@ def delete_workflow(request):
     else:
         return HttpResponse("{status: 404}")
 
+def schema_fields_to_html(schema_fields):
+    html_output = ""
+    small_input = "<input placeholder='bla'></input>"
+    big_input = "<textarea placeholder='bla'></textarea>"
+    for field in schema_fields:
+       if field['inputType'] == 'Small input':
+           html_output += small_input
+       else:
+           html_output += big_input
+    return html_output
+
+
+def create_workflow_form(schemas, metadata):
+    schemas_dict = {schema.title: schema.fields for schema in schemas}
+    form = []
+    for entry in json.loads(metadata):
+        form.append({
+                'title': entry['title'],
+                'input': schema_fields_to_html(schemas_dict[entry['title']])
+        })
+    return form
+
+
+@login_required()
+def try_workflow(request, title):
+    if request.method == 'POST':
+        print "Posting stuff"
+        return HttpResponse()
+    else:
+        user = request.user
+        workflow = Workflow.objects.get(creator=user, title=title)
+        schemas = workflow.entryschemas.all()
+        metadata = workflow.entries_metadata
+        workflow_form = create_workflow_form(schemas, metadata)
+        context = {
+            "workflow_title": title,
+            "workflow_form": workflow_form,
+            "action": '/core/workflow/try/%s/' % title
+        }
+        return render(request, 'core/workflow_try.html', context)
+
 @login_required()
 def create_learned(request):
     if 'retrospective_id' not in request.session:
@@ -188,9 +229,14 @@ def create_failed(request):
             failed.save()
             if 'more' not in request.POST:
                 return redirect('/core/create/succeeded')
-    else:    
-        form = FailedForm(initial={'retrospective_id':request.session['retrospective_id']})
-    
+    else:
+        form = FailedForm(
+            initial={'retrospective_id': request.session[
+                    'retrospective_id'
+                ]
+            }
+        )
+
     context = {"username": "me",
                "question": "In what did I fail?",
                "form": form,

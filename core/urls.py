@@ -34,5 +34,7 @@ urlpatterns = patterns(
         views.save_workflow, name='save_workflow'),
     url(r'^workflow/delete$',
         views.delete_workflow, name='delete_workflow'),
+    url(r'^workflow/try/(?P<title>[^/]+)/$',
+        views.try_workflow, name='try_workflow'),
     url(r'^$', views.index, name='index'),
 )

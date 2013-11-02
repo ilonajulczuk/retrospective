@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+
+{% block content %}
+<h1> Trying new workflow '{{ workflow_title }}'</h1>
+
+
+<form action="{{ action }}" method="POST">
+  {% csrf_token %}
+
+{% for form_entry in workflow_form %}
+<h3> {{ form_entry.title }} </h3>
+    {{ form_entry.input|safe}}
+{% endfor %}
+
+  <input type="submit" value="Save" />
+</form>
+
+
+{% endblock %}

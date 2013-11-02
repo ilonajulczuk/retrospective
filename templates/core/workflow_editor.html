@@ -4,7 +4,6 @@
 
 <script src="http://code.jquery.com/jquery-2.0.2.min.js" type='text/javascript'></script>
 <link rel="stylesheet" href="/static/todos.css"/>
-<script src="http://ojjs.org/download/oj/latest/oj.min.js" type='text/javascript'></script>
 <script src="http://underscorejs.org/underscore-min.js" type='text/javascript'></script>
 <script src="http://backbonejs.org/backbone.js" type='text/javascript'></script>
 <script src="https://raw.github.com/douglascrockford/JSON-js/master/json.js" type='text/javascript'></script>
@@ -102,7 +101,7 @@
                       </select>
                 <% } %>
                 <hr/>
-                <a class="btn btn-success" href="/core/workflow/try">Try it now</a>
+                <a class="btn btn-success" href="/core/workflow/try/<%= title %>">Try it now</a>
         </div>
   </script>
 {% endblock %}

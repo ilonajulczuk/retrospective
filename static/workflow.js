@@ -169,6 +169,7 @@ $(function(){
                 .success(function(data) {
                     alert("Well done, your workflow have been saved");
                 });
+                this.render();
             },
 
             discardWorkflow: function() {
