@@ -69,7 +69,13 @@ $(function(){
                     if (!this.length) return 1;
                     return this.last().get('order') + 1;
             },
-
+            multipleNumber: 1,
+            changeToSingle: function() {
+                this.multipleNumber = 1;
+            },
+            changeToMultiple: function(newNumber) {
+                this.multipleNumber = newNumber;
+            },
             comparator: 'order'
 
         });
@@ -97,17 +103,20 @@ $(function(){
             },
 
             startNewWorkflow: function() {
-                alert("We'll start shortly");
+                this.title = "new_workflow";
+                this.render();
+                App.clearAllEntries();
             },
 
             setFieldsSingle: function() {
                 this.multiple = false;
+                Entries.changeToSingle();
                 this.render();
                 this.changeNumberOfFields();
             },
             
             changeName: function() {
-                this.name = $("#workflow-name").val();
+                this.title = $("#workflow-name").val();
             },
 
             setFieldsMultiple: function() {
@@ -127,14 +136,14 @@ $(function(){
                 else {
                         this.numberOfFields = newNumber.target.value;
                 }
-                console.log(this.numberOfFields);
+                Entries.changeToMultiple(this.numberOfFields);
             },
 
             saveWorkflow: function() {
                 $.ajax({
                     type: "POST",
                     url: '/core/workflow/save',
-                    dataType: "json",
+                    dataType: "html",
                     data: {
                         number_of_forms: _.size(Entries),
                         forms:  JSON.stringify(_.map(forms, function(entries) {
@@ -145,7 +154,11 @@ $(function(){
                                 skippable: entry.get("skippable")
                             };
                             });
-                            return {data: entriesInfo};
+
+                            return {
+                                data: entriesInfo,
+                                number: entries.multipleNumber
+                            };
 
                         })),
                         title: $("#workflow-name").val()
@@ -154,7 +167,8 @@ $(function(){
                 .error(function(data) {
                 })
                 .success(function(data) {
-                })
+                    alert("Well done, your workflow have been saved");
+                });
             },
 
             discardWorkflow: function() {
@@ -163,7 +177,7 @@ $(function(){
                         url: '/core/workflow/delete',
                         dataType: "json",
                         data: {
-                                title: $("#workflow-name").val()
+                                title: this.title 
                         }
                 })
                 .error(function(data) {
@@ -171,6 +185,8 @@ $(function(){
                 .success(function(data) {
                 });
                 App.clearAllEntries();
+                this.title = "new_workflow";
+                this.render();
             },
             initialize: function() {
                 this.listenTo(Entries, 'all', this.render);
@@ -180,7 +196,14 @@ $(function(){
             // Re-rendering the App just means refreshing the statistics -- the rest
             // of the app doesn't change.
             render: function() {
-                this.$el.html(this.template({multiple: this.multiple, title: this.title}));
+                this.$el.html(
+                    this.template(
+                        {
+                            multiple: this.multiple,
+                            title: this.title
+                        }
+                    )
+                );
                 return this;
             }
         });
@@ -220,7 +243,7 @@ $(function(){
 
             // Toggle the `"skippable"` state of the model.
             toggleSkippable: function() {
-                this.model.toggle();
+                this.model.toggle(); 
             },
 
             // Switch this view into `"editing"` mode, displaying the input field.
@@ -298,7 +321,6 @@ $(function(){
                    Entries = new EntryList();
                    Sidebox.listenTo(Entries, 'all', Sidebox.render);
                    forms.push(Entries);
-                   console.log(Entries);
                }
                else {
                    Entries = forms[this.currentEntryNumber + 1]
@@ -372,14 +394,12 @@ $(function(){
             // If you hit return in the main input field, create new **Todo** model,
             // persisting it to *localStorage*.
             createOnEnter: function(e) {
-                    console.log("create on enter");
                     if (e.keyCode != 13) return;
                     if (!this.input.val()) return;
                     Entries.create({
                           title: this.input.val(),
                           inputType: this.valueType.val()
                     });
-                    console.log("Oh, new entry should be created");
                     this.input.val('');
             },
 

@@ -15,7 +15,7 @@ from django.http import Http404, HttpResponse
 @login_required()
 def create_project(request):
     user = request.user
-    
+
     if request.method == 'POST':
         title = request.POST['title']
         description = request.POST['description']
@@ -104,21 +104,29 @@ def save_workflow(request):
         title = request.POST['title']
 
         user = request.user
-        schema, _ = EntrySchema.objects.get_or_create(
-            creator=user,
-            title=title
-        )
-
-        schema.fields = forms_info
-        schema.save()
-
         workflow, created = Workflow.objects.get_or_create(
             creator=user,
             title=title,
         )
-        workflow.entryschemas.add(schema)
+        if not created:
+            workflow.entryschemas.clear()
 
-        workflow.entries_metadata = "{}"
+        entries_metadata = []
+        for i, form in enumerate(forms_info):
+            entry_title = title + "_%s" % i
+            schema, _ = EntrySchema.objects.get_or_create(
+                creator=user,
+                title=entry_title
+            )
+            schema.fields = form['data']
+            schema.save()
+            entries_metadata.append({
+                'title': entry_title,
+                'number': form['number']
+            })
+            workflow.entryschemas.add(schema)
+
+        workflow.entries_metadata = json.dumps(entries_metadata)
         workflow.save()
         if created:
             return HttpResponse("{status: 201}")
