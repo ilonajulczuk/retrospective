@@ -152,15 +152,23 @@ def delete_workflow(request):
     else:
         return HttpResponse("{status: 404}")
 
-def schema_fields_to_html(schema_fields):
+def schema_fields_to_html(schema_fields, title):
     html_output = ""
-    small_input = "<input placeholder='bla'></input>"
-    big_input = "<textarea placeholder='bla'></textarea>"
+    label = "<label for='%s'>%s:</label>"
+
+    small_input = "<input type='text' id='%s' class='form-control' name='%s' data-required='%s' />"
+    big_input = "<textarea id='%s' class='form-control' name='%s' data-required='%s'></textarea>"
+
     for field in schema_fields:
-       if field['inputType'] == 'Small input':
-           html_output += small_input
-       else:
-           html_output += big_input
+        if field['inputType'] == 'Small input':
+            basic_input = small_input
+        else:
+            basic_input = big_input
+        name = field['title']
+        required = not field['skippable']
+        field_label = label % (name, name)
+        input = basic_input % (name, name + '_' + title, str(required).lower())
+        html_output += field_label + input
     return html_output
 
 
@@ -169,17 +177,27 @@ def create_workflow_form(schemas, metadata):
     form = []
     for entry in json.loads(metadata):
         form.append({
-                'title': entry['title'],
-                'input': schema_fields_to_html(schemas_dict[entry['title']])
+            'title': entry['title'],
+            'input': schema_fields_to_html(
+                schemas_dict[entry['title']],
+                entry['title']
+            )
         })
     return form
+
+
+def save_retrospective_form(post_data, workflow):
+    print post_data
 
 
 @login_required()
 def try_workflow(request, title):
     if request.method == 'POST':
-        print "Posting stuff"
-        return HttpResponse()
+        user = request.user
+        title = request.POST['title']
+        workflow = Workflow.objects.get(creator=user, title=title)
+        save_retrospective_form(request.POST, workflow)
+        return redirect('/accounts/profile')
     else:
         user = request.user
         workflow = Workflow.objects.get(creator=user, title=title)
