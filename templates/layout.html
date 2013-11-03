@@ -10,47 +10,46 @@
         .page-header {
             font-family: Ubuntu;
             font-size: 50px;
+            margin-top: 0px;
+            padding-top: 40px;
+            padding-left: 40px;
         }
         body {
-            /*background: #999;  for non-css3 browsers */
             font-size: 120%;
             font-family: Ubuntu;
-            background-image:url('{{ STATIC_URL }}background.png');
-           /* background-image: linear-gradient(45deg,
-            #bcf 25%, #dde 25%, #dde 50%,
-             #bcf 50%, #bcf 75%, #dde 75%, #dde);
-            background-size:320px 320px;*/
-        } 
+        }
+        a {
+            color: #090974;
+        }
         h1 {
             color: orange !important;
         }
         #footer {
-            /*background: #999;  for non-css3 browsers */
+            background: #36D792;
             font-size: 140%;
             font-family: Ubuntu;
-            background-image:url('{{ STATIC_URL}}background.png');
-           /* background-image: linear-gradient(45deg,
-            #bcf 25%, #dde 25%, #dde 50%,
-             #bcf 50%, #bcf 75%, #dde 75%, #dde);
-            background-size:320px 320px;*/
+            text-align: center;
+            margin-top: 20px;
+            padding-bottom: 20px;
         } 
     </style>
 </head>
 
 <body>
-    <div class="container" id="header">
-
-    	<div class="col-lg-offset-2 col-lg-10">
-			<h1 class="page-header"><a href="/core">Retrospectives matter</a></h1>
-		</div>
-	</div>
+    <div class="" id="header">
+            <h1 class="page-header">
+                <a href="/core">
+                    Retrospectives matter
+                </a>
+            </h1>
+    </div>
 	
-    <div id="content" class="container panel">
+    <div id="content" class="container">
             {% block content %}{% endblock %}
     </div>
-    <div id="footer" class="container">
-        </hr>
-        <div class="well-large">
+
+    <div id="footer" class="">
+        <div class="well-small">
 
             <a href="/core">
                 back home
@@ -68,6 +67,5 @@
 
         </div>
     </div>
-</br>
 </body>
 </html>
