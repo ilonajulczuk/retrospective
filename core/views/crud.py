@@ -2,12 +2,16 @@
 import json
 from django.shortcuts import render, redirect
 from core.models import Retrospective, User, Project
-from core.workflow import Workflow, EntrySchema
+from core.workflow import Workflow, EntrySchema, Entry
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.core.context_processors import csrf
 from core.forms import (
   LearnedForm, FailedForm, SuccessForm, RetrospectiveGeneralForm,
   ProjectForm)
+from mailing.models import (
+    BasicMailConfigurationForm,
+    MailConfiguration
+)
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, HttpResponse
 
@@ -152,15 +156,23 @@ def delete_workflow(request):
     else:
         return HttpResponse("{status: 404}")
 
-def schema_fields_to_html(schema_fields):
-    html_output = ""
-    small_input = "<input placeholder='bla'></input>"
-    big_input = "<textarea placeholder='bla'></textarea>"
-    for field in schema_fields:
-       if field['inputType'] == 'Small input':
-           html_output += small_input
-       else:
-           html_output += big_input
+def schema_fields_to_html(schema_fields, title):
+    html_output = "<h3>%s</h3>" % title
+    label = "<label for='%s'>%s:</label>"
+
+    small_input = "<input type='text' id='%s' class='form-control' name='%s' data-required='%s' />"
+    big_input = "<textarea id='%s' class='form-control' name='%s' data-required='%s'></textarea>"
+
+    for i, field in enumerate(schema_fields):
+        if field['inputType'] == 'Small input':
+            basic_input = small_input
+        else:
+            basic_input = big_input
+        name = field['title']
+        required = not field['skippable']
+        field_label = label % (name, name)
+        input = basic_input % (name, title + "-%s" % i, str(required).lower())
+        html_output += field_label + input
     return html_output
 
 
@@ -169,17 +181,36 @@ def create_workflow_form(schemas, metadata):
     form = []
     for entry in json.loads(metadata):
         form.append({
-                'title': entry['title'],
-                'input': schema_fields_to_html(schemas_dict[entry['title']])
+            'title': entry['title'],
+            'input': schema_fields_to_html(
+                schemas_dict[entry['title']],
+                entry['title']
+            )
         })
     return form
+
+
+def save_retrospective_form(post_data, workflow):
+    for i, schema in enumerate(workflow.entryschemas.all()):
+        entry = Entry(schema=schema)
+        entry_data = {}
+        data_keys = map(lambda x: x['title'], schema.fields)
+        fields_data = filter(lambda x: x[0].startswith(workflow.title + "_%s" % i) and x[0] != workflow.title, post_data.iteritems())
+        for desired_key, key, entry_text in zip(data_keys, *(zip(*fields_data))):
+            if key.startswith(schema.title):
+                entry_data[desired_key] = entry_text
+        entry.data = entry_data
+        entry.save()
 
 
 @login_required()
 def try_workflow(request, title):
     if request.method == 'POST':
-        print "Posting stuff"
-        return HttpResponse()
+        user = request.user
+        title = request.POST['title']
+        workflow = Workflow.objects.get(creator=user, title=title)
+        save_retrospective_form(request.POST, workflow)
+        return redirect('/accounts/profile')
     else:
         user = request.user
         workflow = Workflow.objects.get(creator=user, title=title)

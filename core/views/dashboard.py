@@ -2,7 +2,7 @@ from django.shortcuts import render
 from core.models import Retrospective, User, Project
 from django.contrib.auth.decorators import login_required
 from mailing.models import MailConfiguration, BasicMailConfigurationForm
-
+from core.workflow import Workflow
 
 
 def discard_broken_retrospectives(user):
@@ -19,6 +19,7 @@ def profile_dashboard(request):
     discard_broken_retrospectives(user)
     current_projects = Project.objects.filter(user=user)
     retrospectives = Retrospective.objects.filter(user=user)
+    workflows = Workflow.objects.filter(creator=user)
     try:
         mailing_configuration = MailConfiguration.objects.get(user=user)
     except MailConfiguration.DoesNotExist:
@@ -30,6 +31,7 @@ def profile_dashboard(request):
         "projects": current_projects,
         "retrospectives": retrospectives,
         "mailing_configuration": mailing_configuration,
+        "workflows": workflows,
     }
     return render(request, 'core/dashboard.html', context)
 

@@ -1,20 +1,52 @@
 {% extends "layout.html" %}
 
-
 {% block content %}
+<style>
+      input.parsley-success, textarea.parsley-success {
+        color: #468847 !important;
+        background-color: #DFF0D8 !important;
+        border: 1px solid #D6E9C6 !important;
+      }
+      input.parsley-error, textarea.parsley-error {
+        color: #B94A48 !important;
+        background-color: #F2DEDE !important;
+        border: 1px solid #EED3D7 !important;
+      }
+      input {
+          width: 150px;
+          margin: 0 2px !important;
+      }
+      ul.parsley-error-list {
+          font-size: 11px;
+          margin: 2px;
+          list-style-type:none;
+      }
+      ul.parsley-error-list li {
+          line-height: 11px;
+      }
+</style>
+
+<script src="http://code.jquery.com/jquery-2.0.2.min.js" type='text/javascript'></script>
+<script type="text/javascript" src="/static/parsley.js"></script>
+
 <h1> Trying new workflow '{{ workflow_title }}'</h1>
+<div class='row'>
+    <div class="col-sm-6 col-md-5 col-lg-6">
+        <form data-validate="parsley" action={{action}} method="POST" id='workflow-form'>
+          {% csrf_token %}
 
+        {% for form_entry in workflow_form %}
+            {{ form_entry.input|safe}}
+        {% endfor %}
 
-<form action="{{ action }}" method="POST">
-  {% csrf_token %}
+          <input type='hidden' name='title' value='{{ workflow_title }}'></input>
 
-{% for form_entry in workflow_form %}
-<h3> {{ form_entry.title }} </h3>
-    {{ form_entry.input|safe}}
-{% endfor %}
-
-  <input type="submit" value="Save" />
-</form>
-
-
+            <br />
+          <button class='btn btn-default' 
+                  onclick="javascript:$('#workflow-form').parsley( 'validate' );">
+            Save!
+          </button>
+        </form>
+    </div>
+</div>
 {% endblock %}

@@ -2,14 +2,12 @@ from django.conf.urls import patterns, include, url
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
-from core.models import *
 from django.conf import settings
 
-
 admin.autodiscover()
-
 urlpatterns = patterns(
     '',
+    (r'^grappelli/', include('grappelli.urls')),
     url(r'^', include('core.urls')),
     url(r'^core/', include('core.urls')),
     url(r'^api/', include('api.urls')),
