@@ -1,6 +1,31 @@
 {% extends "layout.html" %}
 
 {% block content %}
+<style>
+      input.parsley-success, textarea.parsley-success {
+        color: #468847 !important;
+        background-color: #DFF0D8 !important;
+        border: 1px solid #D6E9C6 !important;
+      }
+      input.parsley-error, textarea.parsley-error {
+        color: #B94A48 !important;
+        background-color: #F2DEDE !important;
+        border: 1px solid #EED3D7 !important;
+      }
+      input {
+          width: 150px;
+          margin: 0 2px !important;
+      }
+      ul.parsley-error-list {
+          font-size: 11px;
+          margin: 2px;
+          list-style-type:none;
+      }
+      ul.parsley-error-list li {
+          line-height: 11px;
+      }
+</style>
+
 <script src="http://code.jquery.com/jquery-2.0.2.min.js" type='text/javascript'></script>
 <script type="text/javascript" src="/static/parsley.js"></script>
 

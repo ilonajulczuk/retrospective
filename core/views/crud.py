@@ -8,6 +8,10 @@ from django.core.context_processors import csrf
 from core.forms import (
   LearnedForm, FailedForm, SuccessForm, RetrospectiveGeneralForm,
   ProjectForm)
+from mailing.models import (
+    BasicMailConfigurationForm,
+    MailConfiguration
+)
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, HttpResponse
 
@@ -153,7 +157,7 @@ def delete_workflow(request):
         return HttpResponse("{status: 404}")
 
 def schema_fields_to_html(schema_fields, title):
-    html_output = ""
+    html_output = "<h3>%s</h3>" % title
     label = "<label for='%s'>%s:</label>"
 
     small_input = "<input type='text' id='%s' class='form-control' name='%s' data-required='%s' />"

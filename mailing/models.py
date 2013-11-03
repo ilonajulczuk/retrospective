@@ -18,7 +18,7 @@ DAY_TUPLES = [
 ]
 
 class MailConfiguration(models.Model):
-    
+
     user = models.ForeignKey(User)
     every_week = models.BooleanField(default=True)
     day_of_the_week = models.CharField(
@@ -38,7 +38,7 @@ class MailConfiguration(models.Model):
             self.id,
         )
 
-        
+
 class BasicMailConfigurationForm(forms.ModelForm):
     day_of_the_week = forms.ChoiceField(
         choices=DAY_TUPLES

@@ -34,11 +34,8 @@
             </section>
 
             <footer>
-              <a id="clear-completed">Clear completed</a>
-              <a id="save-entry">Save entry</a>
-              <a id="previous-entry">Previous</a>
-              <a id="next-entry">Next</a>
-              <div id="todo-count"></div>
+              <a class="btn btn-default" id="previous-entry">Previous</a>
+              <a class="btn btn-default" id="next-entry">Next</a>
             </footer>
 
           </div>
@@ -65,14 +62,9 @@
   </script>
 
   <script type="text/template" id="stats-template">
-    <% if (skippable) { %>
-      <a id="clear-completed">
-        Clear <%= skippable %> completed <%= skippable == 1 ? 'item' : 'items' %>
-      </a>
-    <% } %>
-              <a id="save-entries" class="btn btn-success">Save entry</a>
               <a id="previous-entry" class="btn btn-default">Previous</a>
               <a id="next-entry" class="btn btn-default">Next</a>
+    <br />
     <div class="todo-count"><b><%= remaining %></b> <%= remaining == 1 ? 'field' : 'fields' %> cannot be skipped</div>
   </script>
 

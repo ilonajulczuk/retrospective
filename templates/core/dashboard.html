@@ -116,12 +116,7 @@ $.ajax({
 
 </script>
 <h1>Hello {{ username }}!</h1>
-<h1>Dashboard</h1>
-
-<p>
-	Configure your things here!
-</p>
-<h1>Your projects</h1>
+<h2>Your projects</h2>
 <dl>
 
 
@@ -153,8 +148,41 @@ You haven't create any projects yet.
 		Create project
 	</a>
 </p>
-
-<h1>Your past retrospectives</h1>
+<h2>Your workflows</h2>
+{% for workflow in workflows %}
+<div class="row">
+<div class="col-lg-6">
+  <dt>{{ workflow.title }}</dt>
+  <dd>{{ project.description }}</dd>
+</div>
+<div class="col-lg-1">
+	<form class="form-horizontal" action="/core/workflow/editor" method="get">{% csrf_token %}
+		<input name="id" style="display:none" value="{{workflow.title}}"></input>
+		<button type="submit" name="id" value="{{workflow.title}}" class="btn btn-primary btn-xs">
+			Change
+		</button>
+	</form>
+	
+</div>
+<div class="col-lg-4">
+	<form class="form-horizontal" action="/core/workflow/try/{{workflow.title}}" method="get">{% csrf_token %}
+		<input name="id" style="display:none" value="{{workflow.title}}"></input>
+		<button type="submit" name="id" value="{{workflow.title}}" class="btn btn-primary btn-xs">
+			retrospective
+		</button>
+	</form>
+	
+</div>
+</div>
+    {{ workflow.title }}
+{% empty %}
+    Oh, you don't have any yet.
+{% endfor %}
+<br />
+	<a href="/core/workflow/editor" class="btn btn-success">
+		Create workflow
+	</a>
+<h2>Your past retrospectives</h2>
 {% for retrospective in retrospectives %}
 	<div class="row">
 		<div class="col-lg-6">
@@ -176,7 +204,7 @@ You haven't create any projects yet.
 			Create new
 	</a>
 </p>
-<h1>Your emailing settings</h1>
+<h2>Your emailing settings</h2>
 	{% if mailing_configuration %}
 		{% if mailing_configuration.every_week %}
 			<p>
@@ -199,8 +227,8 @@ You haven't create any projects yet.
 			</a>
 		</p>
 	{% endif %}
-<h1>Statistics</h1>
-<h2>Histograms</h2>
+<h2>Statistics</h2>
+<h3>Histograms</h3>
 <div class="row">
 		<div class="col-lg-5">
 			<h3>Number of retrospectives per month</h3>
@@ -217,7 +245,7 @@ You haven't create any projects yet.
 		
 </div>
 
-<h1>Data export</h1>
+<h2>Data export</h2>
 	<p>Browse your data 
 		<a  class="btn btn-primary btn-xs" href="/api/retrospectives">
 			as api view
@@ -228,7 +256,7 @@ You haven't create any projects yet.
 	 	</a>
 	 	.
 	 </p>
-<h1>Account details</h1>
+<h2>Account details</h2>
 <p> Your email address is: {{ email }} </p>
 <p> To change your password click: 
 	<a  class="btn btn-warning btn-xs" href="/accounts/change_password">
