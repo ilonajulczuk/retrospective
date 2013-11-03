@@ -2,7 +2,7 @@
 import json
 from django.shortcuts import render, redirect
 from core.models import Retrospective, User, Project
-from core.workflow import Workflow, EntrySchema
+from core.workflow import Workflow, EntrySchema, Entry
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.core.context_processors import csrf
 from core.forms import (
@@ -163,7 +163,7 @@ def schema_fields_to_html(schema_fields, title):
     small_input = "<input type='text' id='%s' class='form-control' name='%s' data-required='%s' />"
     big_input = "<textarea id='%s' class='form-control' name='%s' data-required='%s'></textarea>"
 
-    for field in schema_fields:
+    for i, field in enumerate(schema_fields):
         if field['inputType'] == 'Small input':
             basic_input = small_input
         else:
@@ -171,7 +171,7 @@ def schema_fields_to_html(schema_fields, title):
         name = field['title']
         required = not field['skippable']
         field_label = label % (name, name)
-        input = basic_input % (name, name + '_' + title, str(required).lower())
+        input = basic_input % (name, title + "-%s" % i, str(required).lower())
         html_output += field_label + input
     return html_output
 
@@ -191,7 +191,16 @@ def create_workflow_form(schemas, metadata):
 
 
 def save_retrospective_form(post_data, workflow):
-    print post_data
+    for i, schema in enumerate(workflow.entryschemas.all()):
+        entry = Entry(schema=schema)
+        entry_data = {}
+        data_keys = map(lambda x: x['title'], schema.fields)
+        fields_data = filter(lambda x: x[0].startswith(workflow.title + "_%s" % i) and x[0] != workflow.title, post_data.iteritems())
+        for desired_key, key, entry_text in zip(data_keys, *(zip(*fields_data))):
+            if key.startswith(schema.title):
+                entry_data[desired_key] = entry_text
+        entry.data = entry_data
+        entry.save()
 
 
 @login_required()
