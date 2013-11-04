@@ -1,4 +1,4 @@
-from basic import *
-from crud import *
-from dashboard import *
+from core.views.basic import *
+from core.views.crud import *
+from core.views.dashboard import *
 
