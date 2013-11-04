@@ -8,21 +8,17 @@ ADMINS = (
 )
 
 MANAGERS = ADMINS
-
+db_pass = os.environ.get('DB-PASS', 'devel-retr')
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'retro',                      # Or path to database file if using sqlite3.
-        # The following settings are not used with sqlite3:
-        'USER': 'retro',
-        'PASSWORD': 'retro',
-        'HOST': 'retro',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        'PORT': 'retro',                      # Set to empty string for default.
+        'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'devel-retr',                      # Or path to database file if using sqlite3.
+        'USER': 'devel-retr',
+        'PASSWORD': db_pass,
     }
 }
 
 ALLOWED_HOSTS = []
-
 
 LANGUAGE_CODE = 'en-us'
 
@@ -157,3 +153,6 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
     ]
 }
+
+from retrospective.local_settings import *
+

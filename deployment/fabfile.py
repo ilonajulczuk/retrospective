@@ -43,12 +43,13 @@ def init_stable_deployment():
 
 def init_deployment(app_name):
     with cd('~/apps'):
-        run('mkdir -p {}'.format(app_name))
+        #run('mkdir -p {}'.format(app_name))
+        run('echo "hello"')
 
     code_dir = '~/apps/{}/'.format(app_name)
     with cd(code_dir):
         print yellow("Cloning from remote repository", bold=True)
-        run('git clone git@github.com:atteroTheGreatest/retrospective.git code')
+        #run('git clone git@github.com:atteroTheGreatest/retrospective.git code')
         print yellow("Initialising virtualenv", bold=True)
         run('virtualenv -p /usr/bin/python3.3 .')
         print green('Success!', bold=True)
