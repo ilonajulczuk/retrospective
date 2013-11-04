@@ -12,7 +12,7 @@ db_pass = os.environ.get('DB-PASS', 'devel_retr')
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'devel_retr',                      # Or path to database file if using sqlite3.
+        'NAME': 'devel-retr',                      # Or path to database file if using sqlite3.
         'USER': 'devel_retr',
         'PASSWORD': db_pass,
         'HOST': ''
