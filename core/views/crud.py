@@ -195,7 +195,7 @@ def save_retrospective_form(post_data, workflow):
         entry = Entry(schema=schema)
         entry_data = {}
         data_keys = map(lambda x: x['title'], schema.fields)
-        fields_data = filter(lambda x: x[0].startswith(workflow.title + "_%s" % i) and x[0] != workflow.title, post_data.iteritems())
+        fields_data = filter(lambda x: x[0].startswith(workflow.title + "_%s" % i) and x[0] != workflow.title, post_data.items())
         for desired_key, key, entry_text in zip(data_keys, *(zip(*fields_data))):
             if key.startswith(schema.title):
                 entry_data[desired_key] = entry_text

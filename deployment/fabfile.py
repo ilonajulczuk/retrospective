@@ -50,7 +50,7 @@ def init_deployment(app_name):
         print yellow("Cloning from remote repository", bold=True)
         run('git clone git@github.com:atteroTheGreatest/retrospective.git code')
         print yellow("Initialising virtualenv", bold=True)
-        run('virtualenv .')
+        run('virtualenv -p /usr/bin/python3.3 .')
         print green('Success!', bold=True)
 
 
