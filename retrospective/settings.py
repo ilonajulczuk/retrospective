@@ -15,7 +15,7 @@ DATABASES = {
         'NAME': 'devel-retr',                      # Or path to database file if using sqlite3.
         'USER': 'devel_retr',
         'PASSWORD': db_pass,
-        'HOST': ''
+        'HOST': 'localhost'
     }
 }
 
