@@ -8,7 +8,7 @@ def number_of_retrospectives_per_month(retrospectives):
 	number_per_month = Counter()
 	for retrospective in retrospectives:
 		number_per_month[retrospective.created.month] += 1
-	for x in xrange(12):
+	for x in range(12):
 		if x not in number_per_month:
 			number_per_month[x] = 0
 
@@ -18,7 +18,7 @@ def number_of_retrospectives_per_weekday(retrospectives):
 	number_per_weekday = Counter()
 	for retrospective in retrospectives:
 		number_per_weekday[retrospective.created.weekday()] += 1
-	for x in xrange(7):
+	for x in range(7):
 		if x not in number_per_weekday:
 			number_per_weekday[x] = 0
 	return number_per_weekday
@@ -44,15 +44,15 @@ def get_data_about_retrospective_content(user):
 		succeeded_entries[retrospective.successentry_set.count()] += 1
 		failed_entries[retrospective.failedentry_set.count()] += 1
 
-	for x in xrange(5):
+	for x in range(5):
 		if x not in learned_entries:
 			learned_entries[x] = 0
 
-	for x in xrange(5):
+	for x in range(5):
 		if x not in failed_entries:
 			failed_entries[x] = 0
 
-	for x in xrange(5):
+	for x in range(5):
 		if x not in succeeded_entries:
 			succeeded_entries[x] = 0
 
