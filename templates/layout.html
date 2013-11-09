@@ -11,8 +11,9 @@
             font-family: Ubuntu;
             font-size: 50px;
             margin-top: 0px;
-            padding-top: 40px;
+            padding-top: 20px;
             padding-left: 40px;
+            margin-bottom: -10px;
         }
         body {
             font-size: 120%;
@@ -24,6 +25,13 @@
         h1 {
             color: orange !important;
         }
+        #navigation {
+            font-size: 200%;
+            font-family: Ubuntu;
+            padding-bottom: 20px;
+            padding-left: 40px;
+        }
+
         #footer {
             background: #36D792;
             font-size: 140%;
@@ -37,11 +45,40 @@
 
 <body>
     <div class="" id="header">
-            <h1 class="page-header">
-                <a href="/core">
-                    Retrospectives matter
-                </a>
-            </h1>
+        <div class="page-header">
+            Retrospectives matter
+        </div>
+        <div id="navigation" class="well-small">
+            <ul class="nav nav-pills">
+                <li>
+                    <a href="/core">
+                        back home
+                    </a> 
+                </li>
+                <li>
+                    <a href="/core/more">
+                        learn more
+                    </a> 
+                </li>
+                {% if user.is_authenticated %} 
+                <li>
+                    <a href="/accounts/profile">view dashboard</a>
+                </li>
+                <li>
+                    <a href="/accounts/logout"> logout</a>
+                </li>
+                {% else %}
+                <li>
+                    <a href="/accounts/login">login</a> 
+                </li>
+                {% endif %}
+                {% if user.is_superuser %}
+                <li>
+                    <a href="/_admin/">admin</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
     </div>
 	
     <div id="content" class="container">
@@ -49,23 +86,12 @@
     </div>
 
     <div id="footer" class="">
-        <div class="well-small">
-
-            <a href="/core">
-                back home
-            </a> /
-
-            <a href="/core/more">
-                learn more
-            </a> /
-            {% if user.is_authenticated %} 
-                <a href="/accounts/logout"> logout</a> /
-                <a href="/accounts/profile">view dashboard</a>
-            {% else %}
-                <a href="/accounts/login">login</a> 
-            {% endif %}
-
-        </div>
+        <p>
+            Created by <a href="http://atte.ro">att</a>.
+        </p>
+        <p>
+            Code hosted on <a href="https://github.com/atteroTheGreatest/retrospective">github</a>
+        </p>
     </div>
 </body>
 </html>
